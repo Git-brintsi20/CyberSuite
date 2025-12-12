@@ -33,9 +33,12 @@ api.interceptors.response.use(
       const { status, data } = error.response;
 
       if (status === 401) {
-        // Unauthorized - redirect to login
+        // Unauthorized - redirect to login only if not already on login/register pages
         if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+          const currentPath = window.location.pathname;
+          if (currentPath !== '/login' && currentPath !== '/register') {
+            window.location.href = '/login';
+          }
         }
       }
 
@@ -48,11 +51,13 @@ api.interceptors.response.use(
     } else if (error.request) {
       // Request made but no response
       return Promise.reject({
+        status: 0,
         message: 'No response from server. Please check your connection.',
       });
     } else {
       // Something else happened
       return Promise.reject({
+        status: 0,
         message: error.message || 'An unexpected error occurred',
       });
     }
@@ -63,8 +68,21 @@ api.interceptors.response.use(
 export const authAPI = {
   register: (userData) => api.post('/auth/register', userData),
   login: (credentials) => api.post('/auth/login', credentials),
+  loginWith2FA: (userId) => api.post('/auth/login/2fa', { userId }),
   logout: () => api.post('/auth/logout'),
   getProfile: () => api.get('/auth/me'),
+};
+
+// 2FA API calls
+export const twoFactorAPI = {
+  getStatus: () => api.get('/2fa/status'),
+  setup: () => api.post('/2fa/setup'),
+  verify: (token) => api.post('/2fa/verify', { token }),
+  validate: (userId, token, isBackupCode = false) => 
+    api.post('/2fa/validate', { userId, token, isBackupCode }),
+  disable: (password) => api.post('/2fa/disable', { password }),
+  regenerateBackupCodes: (password) => 
+    api.post('/2fa/backup-codes/regenerate', { password }),
 };
 
 // Password/Credentials API calls
@@ -76,6 +94,57 @@ export const passwordAPI = {
   delete: (id) => api.delete(`/passwords/${id}`),
   decrypt: (id) => api.post(`/passwords/${id}/decrypt`),
   getStats: () => api.get('/passwords/stats/strength'),
+};
+
+// User API calls
+export const userAPI = {
+  getProfile: () => api.get('/user/profile'),
+  updateProfile: (data) => api.put('/user/profile', data),
+  getSettings: () => api.get('/user/settings'),
+  updateSettings: (settings) => api.put('/user/settings', settings),
+  deleteAccount: (password) => api.delete('/user/account', { data: { password } }),
+};
+
+// Notification API calls
+export const notificationAPI = {
+  getAll: (params) => api.get('/notifications', { params }),
+  markAsRead: (id) => api.put(`/notifications/${id}/read`),
+  markAllAsRead: () => api.put('/notifications/read-all'),
+  delete: (id) => api.delete(`/notifications/${id}`),
+  deleteAll: () => api.delete('/notifications'),
+  create: (notification) => api.post('/notifications', notification),
+};
+
+// Education API calls
+export const educationAPI = {
+  getCourses: () => api.get('/education/courses'),
+  getCourse: (courseId) => api.get(`/education/courses/${courseId}`),
+  updateProgress: (courseId, lessonId) => api.post('/education/progress', { courseId, lessonId }),
+  getProgress: () => api.get('/education/progress'),
+};
+
+// File Vault API calls
+export const fileAPI = {
+  upload: (formData, onUploadProgress) => {
+    return api.post('/files/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      timeout: 60000, // 60 seconds for file uploads
+      onUploadProgress,
+    });
+  },
+  getAll: (params) => api.get('/files', { params }),
+  getById: (id) => api.get(`/files/${id}`),
+  download: (id) => {
+    return api.get(`/files/${id}/download`, {
+      responseType: 'blob',
+      timeout: 60000, // 60 seconds for downloads
+    });
+  },
+  update: (id, data) => api.put(`/files/${id}`, data),
+  delete: (id) => api.delete(`/files/${id}`),
+  deleteMultiple: (fileIds) => api.post('/files/delete-multiple', { fileIds }),
 };
 
 // Health check

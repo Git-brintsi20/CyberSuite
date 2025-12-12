@@ -33,6 +33,31 @@ const userSchema = new mongoose.Schema({
   },
   lastLogin: {
     type: Date
+  },
+  settings: {
+    emailNotifications: {
+      type: Boolean,
+      default: true
+    },
+    securityAlerts: {
+      type: Boolean,
+      default: true
+    },
+    twoFactorEnabled: {
+      type: Boolean,
+      default: false
+    },
+    sessionTimeout: {
+      type: Number,
+      default: 30,
+      min: 5,
+      max: 120
+    },
+    theme: {
+      type: String,
+      enum: ['light', 'dark', 'system'],
+      default: 'dark'
+    }
   }
 }, {
   timestamps: true

@@ -10,10 +10,7 @@ require('dotenv').config();
 const app = express();
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅ MongoDB connected successfully'))
   .catch(err => {
     console.error('❌ MongoDB connection error:', err);
@@ -36,9 +33,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// 3. Body parser with size limit to prevent DOS attacks
-app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+// 3. Body parser with size limit (increased for file uploads)
+app.use(express.json({ limit: '60mb' }));
+app.use(express.urlencoded({ extended: true, limit: '60mb' }));
 
 // 4. Cookie parser
 app.use(cookieParser());
@@ -57,10 +54,20 @@ app.use('/api/', limiter);
 // Import routes
 const authRoutes = require('./routes/authRoutes');
 const passwordRoutes = require('./routes/passwordRoutes');
+const userRoutes = require('./routes/userRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+const educationRoutes = require('./routes/educationRoutes');
+const fileRoutes = require('./routes/fileRoutes');
+const twoFactorRoutes = require('./routes/twoFactorRoutes');
 
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/passwords', passwordRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/education', educationRoutes);
+app.use('/api/files', fileRoutes);
+app.use('/api/2fa', twoFactorRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

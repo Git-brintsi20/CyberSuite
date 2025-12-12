@@ -7,8 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Shield, AlertCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Shield, AlertCircle, Key } from 'lucide-react';
 import Link from 'next/link';
+import { authAPI, twoFactorAPI } from '@/lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,6 +19,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  // 2FA states
+  const [requires2FA, setRequires2FA] = useState(false);
+  const [pendingUserId, setPendingUserId] = useState('');
+  const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [isBackupCode, setIsBackupCode] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,10 +32,42 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await login(email, password);
-      router.push('/dashboard');
+      const response = await authAPI.login({ email, password });
+      
+      if (response.data.requires2FA) {
+        // Show 2FA dialog
+        setRequires2FA(true);
+        setPendingUserId(response.data.userId);
+      } else {
+        // Direct login (no 2FA)
+        await login(email, password);
+        router.push('/dashboard');
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to login. Please check your credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handle2FASubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      // Validate 2FA code
+      await twoFactorAPI.validate(pendingUserId, twoFactorCode, isBackupCode);
+      
+      // Complete login
+      await authAPI.loginWith2FA(pendingUserId);
+      
+      // Update auth context
+      await login(email, password);
+      
+      router.push('/dashboard');
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Invalid verification code');
     } finally {
       setLoading(false);
     }
@@ -92,6 +132,79 @@ export default function LoginPage() {
           </CardFooter>
         </form>
       </Card>
+
+      {/* 2FA Verification Dialog */}
+      <Dialog open={requires2FA} onOpenChange={setRequires2FA}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Two-Factor Authentication</DialogTitle>
+            <DialogDescription>
+              Enter the 6-digit code from your authenticator app
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handle2FASubmit}>
+            <div className="space-y-4">
+              {error && (
+                <div className="flex items-center gap-2 p-3 text-sm text-red-500 bg-red-50 dark:bg-red-900/20 rounded-md">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>{error}</span>
+                </div>
+              )}
+              <div className="space-y-2">
+                <Label htmlFor="twoFactorCode">
+                  {isBackupCode ? "Backup Code" : "Authentication Code"}
+                </Label>
+                <Input
+                  id="twoFactorCode"
+                  type="text"
+                  maxLength={isBackupCode ? 8 : 6}
+                  placeholder={isBackupCode ? "XXXXXXXX" : "000000"}
+                  value={twoFactorCode}
+                  onChange={(e) => setTwoFactorCode(e.target.value.replace(/\D/g, "").toUpperCase())}
+                  className="text-center text-lg tracking-widest"
+                  autoFocus
+                  disabled={loading}
+                />
+              </div>
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                onClick={() => {
+                  setIsBackupCode(!isBackupCode);
+                  setTwoFactorCode("");
+                  setError("");
+                }}
+                className="text-xs"
+              >
+                <Key className="mr-2 h-3 w-3" />
+                {isBackupCode ? "Use authenticator code" : "Use backup code"}
+              </Button>
+            </div>
+            <DialogFooter className="mt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setRequires2FA(false);
+                  setTwoFactorCode("");
+                  setIsBackupCode(false);
+                  setError("");
+                }}
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading || twoFactorCode.length < (isBackupCode ? 8 : 6)}
+              >
+                {loading ? 'Verifying...' : 'Verify'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

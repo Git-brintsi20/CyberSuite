@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const { z } = require('zod');
 const User = require('../models/User');
+const TwoFactor = require('../models/TwoFactor');
+const { createWelcomeNotification } = require('../utils/notificationHelper');
 
 // Zod validation schemas
 const registerSchema = z.object({
@@ -69,6 +71,11 @@ const register = async (req, res) => {
     // Set HTTP-only cookie
     setTokenCookie(res, token);
 
+    // Create welcome notification (async, don't wait)
+    createWelcomeNotification(user._id).catch(err => 
+      console.error('Failed to create welcome notification:', err)
+    );
+
     res.status(201).json({
       success: true,
       message: 'User registered successfully',
@@ -127,6 +134,20 @@ const login = async (req, res) => {
       });
     }
 
+    // Check if 2FA is enabled
+    const twoFactor = await TwoFactor.findOne({ user: user._id });
+    const requires2FA = twoFactor && twoFactor.isEnabled;
+
+    if (requires2FA) {
+      // Return pending status, don't log in yet
+      return res.status(200).json({
+        success: true,
+        requires2FA: true,
+        userId: user._id,
+        message: 'Please enter your 2FA code',
+      });
+    }
+
     // Update last login time
     await user.updateLastLogin();
 
@@ -139,6 +160,7 @@ const login = async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'Login successful',
+      requires2FA: false,
       user: {
         id: user._id,
         username: user.username,
@@ -215,9 +237,63 @@ const getMe = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Complete login after 2FA validation
+ * @route   POST /api/auth/login/2fa
+ * @access  Public
+ */
+const loginWith2FA = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'User ID is required',
+      });
+    }
+
+    // Find user
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // Update last login time
+    await user.updateLastLogin();
+
+    // Generate token
+    const token = generateToken(user._id);
+
+    // Set HTTP-only cookie
+    setTokenCookie(res, token);
+
+    res.status(200).json({
+      success: true,
+      message: 'Login successful',
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error('2FA Login Completion Error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error during login',
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
+  loginWith2FA,
   logout,
   getMe
 };
