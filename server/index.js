@@ -33,9 +33,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// 3. Body parser with size limit (increased for file uploads)
-app.use(express.json({ limit: '60mb' }));
-app.use(express.urlencoded({ extended: true, limit: '60mb' }));
+// 3. Body parser with size limit (set to 50MB to match file upload limits)
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // 4. Cookie parser
 app.use(cookieParser());
@@ -59,6 +59,9 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const educationRoutes = require('./routes/educationRoutes');
 const fileRoutes = require('./routes/fileRoutes');
 const twoFactorRoutes = require('./routes/twoFactorRoutes');
+const mlRoutes = require('./routes/mlRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
+const scannerRoutes = require('./routes/scannerRoutes');
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -68,6 +71,9 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/education', educationRoutes);
 app.use('/api/files', fileRoutes);
 app.use('/api/2fa', twoFactorRoutes);
+app.use('/api/ml', mlRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/scanner', scannerRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

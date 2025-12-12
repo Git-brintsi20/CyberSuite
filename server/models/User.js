@@ -34,6 +34,14 @@ const userSchema = new mongoose.Schema({
   lastLogin: {
     type: Date
   },
+  resetPasswordToken: {
+    type: String,
+    select: false // Don't return token by default
+  },
+  resetPasswordExpire: {
+    type: Date,
+    select: false // Don't return expiry by default
+  },
   settings: {
     emailNotifications: {
       type: Boolean,

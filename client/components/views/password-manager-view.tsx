@@ -24,9 +24,9 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Slider } from "@/components/ui/slider"
 import { Checkbox } from "@/components/ui/checkbox"
-import { KeyRound, Plus, Copy, Trash2, Eye, EyeOff, Check, Globe, Loader2, RefreshCw, Dices } from "lucide-react"
+import { KeyRound, Plus, Copy, Trash2, Eye, EyeOff, Check, Globe, Loader2, RefreshCw, Dices, ShieldCheck, ShieldAlert } from "lucide-react"
 import { toast } from "sonner"
-import { passwordAPI } from "@/lib/api"
+import { passwordAPI, mlAPI } from "@/lib/api"
 
 interface Credential {
   _id: string
@@ -70,6 +70,8 @@ export function PasswordManagerView() {
   const [includeLowercase, setIncludeLowercase] = useState(true)
   const [includeNumbers, setIncludeNumbers] = useState(true)
   const [includeSymbols, setIncludeSymbols] = useState(true)
+  const [passwordAnalysis, setPasswordAnalysis] = useState<any>(null)
+  const [analyzingPassword, setAnalyzingPassword] = useState(false)
   
   // Search & Filter State
   const [searchQuery, setSearchQuery] = useState("")
@@ -88,7 +90,7 @@ export function PasswordManagerView() {
     }
   }, [isGeneratorOpen, passwordLength, includeUppercase, includeLowercase, includeNumbers, includeSymbols])
 
-  const generatePassword = () => {
+  const generatePassword = async () => {
     const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     const lowercase = "abcdefghijklmnopqrstuvwxyz"
     const numbers = "0123456789"
@@ -122,6 +124,32 @@ export function PasswordManagerView() {
     password = password.split('').sort(() => Math.random() - 0.5).join('')
 
     setGeneratedPassword(password)
+
+    // Analyze password with ML
+    try {
+      setAnalyzingPassword(true)
+      const response = await mlAPI.analyzePassword(password)
+      if (response.data && response.data.status === 'success') {
+        setPasswordAnalysis(response.data.analysis)
+      } else if (response.data && response.data.basicAnalysis) {
+        // ML service unavailable, show basic analysis
+        setPasswordAnalysis({
+          strength: response.data.basicAnalysis.strength,
+          score: response.data.basicAnalysis.strength === 'strong' ? 0.9 : 0.5,
+          feedback: [response.data.basicAnalysis.message || 'Basic analysis only'],
+        })
+      }
+    } catch (error: any) {
+      console.error('Password analysis error:', error)
+      // Don't show error toast, just provide basic analysis
+      setPasswordAnalysis({
+        strength: password.length >= 12 ? 'strong' : 'medium',
+        score: password.length >= 12 ? 0.8 : 0.5,
+        feedback: ['ML analysis unavailable'],
+      })
+    } finally {
+      setAnalyzingPassword(false)
+    }
   }
 
   const copyGeneratedPassword = () => {
@@ -672,21 +700,62 @@ export function PasswordManagerView() {
                   variant="outline"
                   size="icon"
                   onClick={generatePassword}
+                  disabled={analyzingPassword}
                 >
-                  <RefreshCw className="h-4 w-4" />
+                  {analyzingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
                 </Button>
               </div>
-              {generatedPassword && (
-                <div className="flex items-center gap-2">
-                  <span className={`text-xs px-2 py-1 rounded ${getPasswordStrength(generatedPassword).bgColor} ${getPasswordStrength(generatedPassword).color}`}>
-                    {getPasswordStrength(generatedPassword).label}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {generatedPassword.length} characters
-                  </span>
-                </div>
-              )}
             </div>
+
+            {/* ML Password Strength Analysis */}
+            {passwordAnalysis && (
+              <div className="space-y-2 rounded-lg border border-border bg-secondary/30 p-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium">ML Strength Analysis</Label>
+                  {passwordAnalysis.strength === 'strong' || passwordAnalysis.strength === 'very strong' ? (
+                    <ShieldCheck className="h-5 w-5 text-green-500" />
+                  ) : (
+                    <ShieldAlert className="h-5 w-5 text-amber-500" />
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Strength:</span>
+                    <span className={`font-medium ${
+                      passwordAnalysis.strength === 'strong' || passwordAnalysis.strength === 'very strong' 
+                        ? 'text-green-500' 
+                        : passwordAnalysis.strength === 'medium' 
+                        ? 'text-amber-500' 
+                        : 'text-red-500'
+                    }`}>
+                      {passwordAnalysis.strength.charAt(0).toUpperCase() + passwordAnalysis.strength.slice(1)}
+                    </span>
+                  </div>
+                  {passwordAnalysis.score !== undefined && (
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Score:</span>
+                        <span className="font-mono text-xs">{(passwordAnalysis.score * 100).toFixed(0)}%</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-secondary overflow-hidden">
+                        <div 
+                          className={`h-full transition-all ${
+                            passwordAnalysis.score >= 0.8 ? 'bg-green-500' : 
+                            passwordAnalysis.score >= 0.5 ? 'bg-amber-500' : 'bg-red-500'
+                          }`}
+                          style={{ width: `${passwordAnalysis.score * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  {passwordAnalysis.feedback && passwordAnalysis.feedback.length > 0 && (
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      {passwordAnalysis.feedback[0]}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Password Length Slider */}
             <div className="space-y-3">

@@ -71,6 +71,8 @@ export const authAPI = {
   loginWith2FA: (userId) => api.post('/auth/login/2fa', { userId }),
   logout: () => api.post('/auth/logout'),
   getProfile: () => api.get('/auth/me'),
+  forgotPassword: (data) => api.post('/auth/forgot-password', data),
+  resetPassword: (token, data) => api.post(`/auth/reset-password/${token}`, data),
 };
 
 // 2FA API calls
@@ -145,6 +147,24 @@ export const fileAPI = {
   update: (id, data) => api.put(`/files/${id}`, data),
   delete: (id) => api.delete(`/files/${id}`),
   deleteMultiple: (fileIds) => api.post('/files/delete-multiple', { fileIds }),
+};
+
+// Dashboard API calls
+export const dashboardAPI = {
+  getStats: () => api.get('/dashboard/stats'),
+  getActivity: () => api.get('/dashboard/activity'),
+};
+
+// ML API calls
+export const mlAPI = {
+  analyzePassword: (password) => api.post('/ml/analyze-password', { password }),
+  checkHealth: () => api.get('/ml/health'),
+};
+
+// Scanner API calls
+export const scannerAPI = {
+  scan: (data) => api.post('/scanner/scan', data),
+  quickScan: (data) => api.post('/scanner/quick', data),
 };
 
 // Health check

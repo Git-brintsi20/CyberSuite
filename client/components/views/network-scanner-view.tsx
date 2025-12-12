@@ -4,7 +4,10 @@ import { useState, useRef, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Radar, Play, Terminal, Loader2, AlertCircle, CheckCircle } from "lucide-react"
+import { Radar, Play, Terminal, Loader2, AlertCircle, CheckCircle, Info, AlertTriangle } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { scannerAPI } from "@/lib/api"
+import { useToast } from "@/hooks/use-toast"
 
 interface ScanResult {
   type: "info" | "success" | "warning" | "error" | "port"
@@ -12,22 +15,12 @@ interface ScanResult {
   timestamp: string
 }
 
-const mockPorts = [
-  { port: 22, service: "SSH", status: "open" },
-  { port: 80, service: "HTTP", status: "open" },
-  { port: 443, service: "HTTPS", status: "open" },
-  { port: 3306, service: "MySQL", status: "filtered" },
-  { port: 5432, service: "PostgreSQL", status: "closed" },
-  { port: 8080, service: "HTTP-Proxy", status: "open" },
-  { port: 21, service: "FTP", status: "closed" },
-  { port: 25, service: "SMTP", status: "filtered" },
-]
-
 export function NetworkScannerView() {
   const [ipAddress, setIpAddress] = useState("")
   const [isScanning, setIsScanning] = useState(false)
   const [scanResults, setScanResults] = useState<ScanResult[]>([])
   const terminalRef = useRef<HTMLDivElement>(null)
+  const { toast } = useToast()
 
   useEffect(() => {
     if (terminalRef.current) {
@@ -43,49 +36,78 @@ export function NetworkScannerView() {
     setScanResults((prev) => [...prev, { type, message, timestamp: getTimestamp() }])
   }
 
-  const simulateScan = async () => {
-    if (!ipAddress) {
-      addResult("error", "Please enter a valid IP address")
+  const performScan = async () => {
+    if (!ipAddress.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter an IP address or hostname",
+        variant: "destructive",
+      })
       return
     }
 
     setIsScanning(true)
     setScanResults([])
 
-    addResult("info", `Initializing scan for target: ${ipAddress}`)
-    await delay(500)
-    addResult("info", "Loading scan modules...")
-    await delay(300)
-    addResult("info", "Starting port discovery...")
-    await delay(800)
-    addResult("success", "Connection established")
-    await delay(400)
-    addResult("info", "Scanning common ports (1-1024)...")
-    await delay(600)
+    try {
+      addResult("info", `Starting scan on ${ipAddress}...`)
+      addResult("info", "Resolving hostname...")
 
-    for (const port of mockPorts) {
-      await delay(Math.random() * 300 + 200)
-      const statusColor = port.status === "open" ? "success" : port.status === "filtered" ? "warning" : "error"
-      addResult("port", `Port ${port.port}/${port.service} - ${port.status.toUpperCase()}`)
+      // Call real backend API
+      const response = await scannerAPI.scan({ host: ipAddress })
+      
+      if (response.data.success) {
+        const { data } = response.data
+        
+        addResult("success", `Resolved: ${data.target.ip}${data.target.hostname ? ` (${data.target.hostname})` : ''}`)
+        addResult("info", `Scanning ${data.summary.total} ports...`)
+        
+        // Display each port result
+        data.results.forEach((result: any) => {
+          const statusIcon = result.status === 'open' ? '✓' : result.status === 'filtered' ? '?' : '✗'
+          const portType = result.status === 'open' ? 'port' : 
+                          result.status === 'filtered' ? 'warning' : 'info'
+          
+          addResult(
+            portType as ScanResult["type"],
+            `${statusIcon} Port ${result.port} (${result.service}): ${result.status.toUpperCase()}`
+          )
+        })
+        
+        addResult(
+          "success",
+          `Scan complete: ${data.summary.open} open, ${data.summary.filtered} filtered, ${data.summary.closed} closed`
+        )
+        
+        // Security warnings
+        if (data.summary.open > 5) {
+          addResult("warning", "⚠ Warning: Multiple open ports detected. Review firewall rules.")
+        }
+        
+        if (data.results.some((r: any) => r.port === 23 && r.status === 'open')) {
+          addResult("error", "🚨 Critical: Telnet (port 23) is open and insecure!")
+        }
+        
+        if (data.results.some((r: any) => r.port === 21 && r.status === 'open')) {
+          addResult("warning", "⚠ Warning: FTP (port 21) detected - consider using SFTP instead")
+        }
+        
+        toast({
+          title: "Scan Complete",
+          description: `Found ${data.summary.open} open ports on ${data.target.ip}`,
+        })
+      }
+    } catch (error: any) {
+      console.error('Scan error:', error)
+      addResult("error", `Scan failed: ${error.response?.data?.message || error.message || 'Unknown error'}`)
+      toast({
+        title: "Scan Failed",
+        description: error.response?.data?.message || "Unable to complete network scan",
+        variant: "destructive",
+      })
+    } finally {
+      setIsScanning(false)
     }
-
-    await delay(500)
-    addResult("info", "Scan complete. Analyzing results...")
-    await delay(400)
-
-    const openPorts = mockPorts.filter((p) => p.status === "open").length
-    const filteredPorts = mockPorts.filter((p) => p.status === "filtered").length
-
-    addResult(
-      "success",
-      `Scan finished: ${openPorts} open, ${filteredPorts} filtered, ${mockPorts.length - openPorts - filteredPorts} closed`,
-    )
-
-    if (openPorts > 3) {
-      addResult("warning", "Warning: Multiple open ports detected. Review firewall rules.")
-    }
-
-    setIsScanning(false)
   }
 
   const getResultStyle = (type: ScanResult["type"]) => {
@@ -110,6 +132,16 @@ export function NetworkScannerView() {
         <p className="text-muted-foreground">Scan IP addresses for open ports and vulnerabilities</p>
       </div>
 
+      {/* Authorization Warning */}
+      <Alert className="border-amber-500/50 bg-amber-500/10">
+        <AlertTriangle className="h-4 w-4 text-amber-500" />
+        <AlertTitle className="text-amber-500">Important: Authorized Use Only</AlertTitle>
+        <AlertDescription className="text-amber-600/90">
+          This network scanner is a real security tool. Only scan networks you own or have explicit permission to scan. 
+          Unauthorized network scanning may be illegal in your jurisdiction. Use responsibly for your home network security audits.
+        </AlertDescription>
+      </Alert>
+
       {/* Input Section */}
       <Card className="border-border bg-card">
         <CardHeader>
@@ -132,7 +164,7 @@ export function NetworkScannerView() {
               />
             </div>
             <Button
-              onClick={simulateScan}
+              onClick={performScan}
               disabled={isScanning}
               className="bg-primary text-primary-foreground hover:bg-primary/90"
             >

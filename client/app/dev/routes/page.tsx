@@ -10,6 +10,8 @@ export default function DevRoutesPage() {
     { path: "/", name: "Landing Page", protected: false },
     { path: "/login", name: "Login", protected: false },
     { path: "/register", name: "Register", protected: false },
+    { path: "/forgot-password", name: "Forgot Password", protected: false },
+    { path: "/reset-password/[token]", name: "Reset Password", protected: false },
     { path: "/dashboard", name: "Dashboard", protected: true },
     { path: "/profile", name: "User Profile", protected: true },
     { path: "/settings", name: "Settings", protected: true },
@@ -23,6 +25,8 @@ export default function DevRoutesPage() {
     { method: "POST", path: "/api/auth/login/2fa", name: "Complete 2FA Login", protected: false },
     { method: "POST", path: "/api/auth/logout", name: "Logout User", protected: true },
     { method: "GET", path: "/api/auth/me", name: "Get Current User", protected: true },
+    { method: "POST", path: "/api/auth/forgot-password", name: "Request Password Reset", protected: false },
+    { method: "POST", path: "/api/auth/reset-password/:token", name: "Reset Password with Token", protected: false },
     
     // 2FA routes
     { method: "GET", path: "/api/2fa/status", name: "Get 2FA Status", protected: true },
@@ -70,6 +74,18 @@ export default function DevRoutesPage() {
     { method: "GET", path: "/api/education/courses/:id", name: "Get Course", protected: true },
     { method: "POST", path: "/api/education/progress", name: "Update Progress", protected: true },
     { method: "GET", path: "/api/education/progress", name: "Get Progress", protected: true },
+    
+    // Dashboard routes
+    { method: "GET", path: "/api/dashboard/stats", name: "Get Dashboard Statistics", protected: true },
+    { method: "GET", path: "/api/dashboard/activity", name: "Get Activity Data", protected: true },
+    
+    // ML routes
+    { method: "POST", path: "/api/ml/analyze-password", name: "Analyze Password Strength", protected: true },
+    { method: "GET", path: "/api/ml/health", name: "ML Service Health Check", protected: true },
+    
+    // Network Scanner routes
+    { method: "POST", path: "/api/scanner/scan", name: "Full Network Port Scan", protected: true },
+    { method: "POST", path: "/api/scanner/quick", name: "Quick Host Discovery", protected: true },
   ]
 
   const methodColors = {
@@ -146,6 +162,9 @@ export default function DevRoutesPage() {
                 { name: "User Management", routes: apiRoutes.filter(r => r.path.includes('/user')) },
                 { name: "Notifications", routes: apiRoutes.filter(r => r.path.includes('/notifications')) },
                 { name: "Education", routes: apiRoutes.filter(r => r.path.includes('/education')) },
+                { name: "Dashboard", routes: apiRoutes.filter(r => r.path.includes('/dashboard')) },
+                { name: "ML Service", routes: apiRoutes.filter(r => r.path.includes('/ml')) },
+                { name: "Network Scanner", routes: apiRoutes.filter(r => r.path.includes('/scanner')) },
               ].map((category, catIndex) => (
                 <div key={catIndex} className="space-y-2">
                   <div className="flex items-center gap-2 mb-2">
@@ -171,7 +190,7 @@ export default function DevRoutesPage() {
                       </div>
                     ))}
                   </div>
-                  {catIndex < 6 && <Separator className="my-3" />}
+                  {catIndex < 9 && <Separator className="my-3" />}
                 </div>
               ))}
             </div>

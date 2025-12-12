@@ -1,8 +1,11 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { z } = require('zod');
 const User = require('../models/User');
 const TwoFactor = require('../models/TwoFactor');
 const { createWelcomeNotification } = require('../utils/notificationHelper');
+const { logLoginActivity } = require('../middleware/mlLogger');
+const sendEmail = require('../utils/sendEmail');
 
 // Zod validation schemas
 const registerSchema = z.object({
@@ -151,6 +154,11 @@ const login = async (req, res) => {
     // Update last login time
     await user.updateLastLogin();
 
+    // Log login activity for ML training
+    logLoginActivity(req, user._id).catch(err => 
+      console.error('Failed to log login activity:', err)
+    );
+
     // Generate token
     const token = generateToken(user._id);
 
@@ -266,6 +274,11 @@ const loginWith2FA = async (req, res) => {
     // Update last login time
     await user.updateLastLogin();
 
+    // Log login activity for ML training (after 2FA success)
+    logLoginActivity(req, user._id).catch(err => 
+      console.error('Failed to log login activity:', err)
+    );
+
     // Generate token
     const token = generateToken(user._id);
 
@@ -290,10 +303,165 @@ const loginWith2FA = async (req, res) => {
   }
 };
 
+/**
+ * @desc    Forgot password - Send reset token
+ * @route   POST /api/auth/forgot-password
+ * @access  Public
+ */
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required'
+      });
+    }
+
+    const user = await User.findOne({ email }).select('+resetPasswordToken +resetPasswordExpire');
+
+    if (!user) {
+      // Don't reveal if user exists or not (security best practice)
+      return res.status(200).json({
+        success: true,
+        message: 'If an account exists with that email, a password reset link has been sent.'
+      });
+    }
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    // Hash token and save to database
+    user.resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+
+    // Set expire time (10 minutes)
+    user.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
+
+    await user.save();
+
+    // Create reset URL
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+    // Email message
+    const message = `You requested a password reset. Please click the link below to reset your password:\n\n${resetUrl}\n\nThis link will expire in 10 minutes.\n\nIf you didn't request this, please ignore this email.`;
+
+    try {
+      await sendEmail({
+        email: user.email,
+        subject: 'Password Reset Request - CyberSuite',
+        message,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #6B46C1;">Password Reset Request</h2>
+            <p>You requested a password reset for your CyberSuite account.</p>
+            <p>Click the button below to reset your password:</p>
+            <a href="${resetUrl}" style="display: inline-block; padding: 12px 24px; background-color: #6B46C1; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">Reset Password</a>
+            <p>Or copy and paste this link into your browser:</p>
+            <p style="word-break: break-all; color: #6B46C1;">${resetUrl}</p>
+            <p style="color: #666; font-size: 14px;">This link will expire in 10 minutes.</p>
+            <p style="color: #666; font-size: 14px;">If you didn't request this, please ignore this email and your password will remain unchanged.</p>
+          </div>
+        `
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Password reset email sent successfully'
+      });
+    } catch (emailError) {
+      console.error('Email sending error:', emailError);
+      
+      // Clear reset token if email fails
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save();
+
+      return res.status(500).json({
+        success: false,
+        message: 'Email could not be sent. Please try again later.'
+      });
+    }
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error processing password reset request'
+    });
+  }
+};
+
+/**
+ * @desc    Reset password using token
+ * @route   POST /api/auth/reset-password/:token
+ * @access  Public
+ */
+const resetPassword = async (req, res) => {
+  try {
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password is required'
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Password must be at least 6 characters'
+      });
+    }
+
+    // Hash the token from URL to compare with database
+    const resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(req.params.token)
+      .digest('hex');
+
+    // Find user with valid token and not expired
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() }
+    }).select('+resetPasswordToken +resetPasswordExpire +password');
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired reset token'
+      });
+    }
+
+    // Set new password (will be hashed by pre-save hook)
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password reset successful. You can now login with your new password.'
+    });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error resetting password'
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
   loginWith2FA,
   logout,
-  getMe
+  getMe,
+  forgotPassword,
+  resetPassword
 };

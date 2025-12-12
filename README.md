@@ -21,16 +21,16 @@
 
 ## 📊 Executive Summary
 
-The **Cybersecurity Applications Suite** is an enterprise-grade, full-stack security platform designed to address critical organizational security needs through three core modules: secure credential management, network threat detection, and security awareness training. Built on the MERN stack with industry-standard encryption protocols, this suite provides a unified solution for managing sensitive data, monitoring network infrastructure, and educating teams on contemporary cybersecurity threats.
+The **Cybersecurity Applications Suite** is an enterprise-grade, full-stack security platform designed to address critical organizational security needs through three core modules: secure credential management, encrypted file storage, and security awareness training. Built on the MERN stack with industry-standard encryption protocols, this suite provides a unified solution for managing sensitive data, securing files, and educating teams on contemporary cybersecurity threats.
 
 ### 🎯 Key Performance Indicators
 
 | Metric | Achievement | Module |
 |--------|-------------|--------|
-| **Threat Detection Accuracy** | **95%** | Network Scanner |
+| **Password Strength Analysis** | **ML-Powered** | Password Manager |
+| **Network Port Scanning** | **Real TCP Scanning** | Network Scanner |
 | **Encryption Operations** | **10,000+/month** | File Vault |
 | **Security Vulnerabilities Covered** | **OWASP Top 10** | Education Module |
-| **Authentication Security** | **Zero-Trust Architecture** | Core Platform |
 
 ---
 
@@ -58,11 +58,14 @@ The **Cybersecurity Applications Suite** is an enterprise-grade, full-stack secu
 - **Status Dashboard**: Real-time 2FA statistics and management
 
 ### 🕵️ **Network Scanner**
-*Advanced threat detection with 95% accuracy rate*
+*Real network security analysis for authorized networks*
 
-- **Real-time Vulnerability Assessment**: Continuous monitoring of network infrastructure
-- **Port Scanning Engine**: Comprehensive analysis of open ports and services
-- **Threat Intelligence Integration**: Automated correlation with known vulnerability databases
+- **TCP Port Scanning**: Real-time scanning using Node.js socket connections
+- **20 Common Ports**: Scans essential services (SSH, HTTP, HTTPS, FTP, MySQL, RDP, etc.)
+- **Hostname Resolution**: Supports both IP addresses and domain names via DNS
+- **Security Analysis**: Detects insecure services (Telnet, FTP) and provides warnings
+- **Batch Scanning**: Efficient rate-limited scanning (10 ports at a time)
+- **Authorized Use Only**: For scanning your own networks (home/office with permission)
 - **Custom Scanning Profiles**: Configurable scan depth and frequency
 - **Alert System**: Immediate notification of critical security threats
 - **Compliance Reporting**: Automated report generation for security audits
@@ -89,6 +92,34 @@ The **Cybersecurity Applications Suite** is an enterprise-grade, full-stack secu
 - **Course Completion**: Real-time progress indicators and completion tracking
 - **Vulnerability Demonstrations**: Safe, sandboxed environment for exploit education
 - **Regular Updates**: Content synchronized with latest OWASP guidelines
+
+### 🤖 **ML-Powered Security Intelligence**
+*Machine learning-based anomaly detection and threat analysis*
+
+- **Login Anomaly Detection**: Isolation Forest algorithm identifies suspicious login patterns
+  - 7-feature analysis: hour, day, weekend, IP, user agent, time since last login, frequency
+  - Real-time scoring (0-100) with detailed risk factors
+  - Requires 50-100 login records for training
+  - Automatic model retraining with new data
+  
+- **ML-Based Password Analysis**: Advanced password strength assessment
+  - Entropy calculation and pattern detection
+  - Sequential character identification (abc, 123)
+  - Common password checking (top 100 known weak passwords)
+  - Estimated crack time calculation
+  - Comprehensive vulnerability reporting with suggestions
+  
+- **Python ML Microservice**: Dedicated Flask API on port 5001
+  - Isolation Forest for anomaly detection
+  - scikit-learn, pandas, numpy for ML operations
+  - Model persistence with joblib
+  - Independent scaling and deployment
+  
+- **ML Training Dashboard**: Admin-only model training interface
+  - View training data statistics
+  - Manual model retraining trigger
+  - Anomaly detection performance metrics
+  - Historical data visualization
 
 ---
 
@@ -170,6 +201,12 @@ Implemented via Helmet.js:
 | Multer | 2+ | File upload middleware |
 | Speakeasy | 2+ | TOTP 2FA implementation |
 | QRCode | 1+ | QR code generation for 2FA |
+| **Python** | **3.x** | **ML microservice runtime** |
+| **Flask** | **3.0.0** | **ML API framework** |
+| **scikit-learn** | **1.3.2** | **Machine learning library** |
+| **pandas** | **2.1.4** | **Data manipulation** |
+| **numpy** | **1.26.2** | **Numerical computing** |
+| **joblib** | **1.3.2** | **Model persistence** |
 
 ### **Security Stack**
 - **Encryption**: AES-256-GCM (Node.js Crypto)
@@ -185,9 +222,11 @@ Implemented via Helmet.js:
 
 ### Prerequisites
 - Node.js >= 18.0.0
+- **Python >= 3.8** (for ML service)
 - MongoDB >= 6.0 (local or Atlas)
 - Git
 - npm or pnpm
+- **pip** (Python package manager)
 
 ### Step 1: Clone Repository
 ```bash
@@ -213,6 +252,9 @@ ENCRYPTION_KEY=your_64_character_hex_key
 PORT=5000
 NODE_ENV=development
 FRONTEND_URL=http://localhost:3000
+
+# ML Service Configuration (optional)
+ML_SERVICE_URL=http://localhost:5001
 ```
 
 #### **Client Environment Variables**
@@ -237,6 +279,13 @@ cd ../client
 npm install
 ```
 
+#### **Install Python ML Dependencies (Optional)**
+```bash
+cd ../server/ml_service
+pip install -r requirements.txt
+```
+> ⚠️ **Note**: The ML service is optional. The application will work without it, but ML-powered features (anomaly detection, advanced password analysis) will be unavailable.
+
 ### Step 4: Start Development Servers
 
 #### **Terminal 1 - Start Backend**
@@ -252,6 +301,18 @@ cd client
 npm run dev
 ```
 Client will run on `http://localhost:3000`
+
+#### **Terminal 3 - Start ML Service (Optional)**
+```bash
+cd server/ml_service
+python app.py
+```
+ML service will run on `http://localhost:5001`
+
+> 💡 **ML Service Notes**: 
+> - Requires 50-100 login records before training is possible
+> - Login data is automatically logged when users authenticate
+> - Train the model via admin dashboard once sufficient data is collected
 
 ### Step 5: Verify Installation
 1. Navigate to `http://localhost:3000`
@@ -305,7 +366,13 @@ cybersecurity-suite/
     ├── middleware/       # Custom middleware (auth, validation)
     ├── models/           # Mongoose schemas
     ├── routes/           # API route definitions
-    └── utils/            # Helper functions (encryption, etc.)
+    ├── utils/            # Helper functions (encryption, etc.)
+    └── ml_service/       # Python ML microservice
+        ├── app.py        # Flask API server (port 5001)
+        ├── requirements.txt  # Python dependencies
+        ├── models/       # ML models (anomaly detector, password analyzer)
+        ├── data/         # Training data and logs
+        └── utils/        # ML utility functions
 ```
 
 ---
@@ -509,6 +576,7 @@ cybersecurity-suite/
 ### Authentication
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login user
+- `POST /api/auth/login/2fa` - Complete 2FA login
 - `POST /api/auth/logout` - Logout user
 - `GET /api/auth/me` - Get current user profile
 
@@ -520,6 +588,38 @@ cybersecurity-suite/
 - `DELETE /api/passwords/:id` - Delete credential
 - `POST /api/passwords/:id/decrypt` - Decrypt password
 - `GET /api/passwords/stats/strength` - Get statistics
+
+### Two-Factor Authentication
+- `POST /api/2fa/setup` - Initialize 2FA setup (get QR code)
+- `POST /api/2fa/verify` - Verify and enable 2FA
+- `POST /api/2fa/validate` - Validate 2FA code during login
+- `POST /api/2fa/disable` - Disable 2FA
+- `GET /api/2fa/status` - Get 2FA status
+- `POST /api/2fa/backup-codes/regenerate` - Regenerate backup codes
+
+### File Vault
+- `GET /api/files` - Get all user files
+- `GET /api/files/:id` - Get single file metadata
+- `POST /api/files/upload` - Upload encrypted file
+- `GET /api/files/:id/download` - Download and decrypt file
+- `DELETE /api/files/:id` - Delete file
+- `PATCH /api/files/:id/favorite` - Toggle favorite status
+
+### Machine Learning (ML Service)
+- `GET /api/ml/health` - Check ML service status
+- `POST /api/ml/analyze-password` - Analyze password strength using ML
+- `POST /api/ml/detect-anomaly` - Detect login anomalies (Protected)
+- `GET /api/ml/stats` - Get ML service statistics (Protected)
+- `POST /api/ml/train` - Train/retrain ML models (Admin only)
+
+### Education
+- `GET /api/education/courses` - Get all courses
+- `GET /api/education/courses/:id` - Get course details
+- `POST /api/education/progress` - Update course progress
+
+### Notifications
+- `GET /api/notifications` - Get user notifications
+- `PATCH /api/notifications/:id/read` - Mark notification as read
 
 ## 🧪 Testing
 
@@ -540,6 +640,7 @@ Access the application:
 | ENCRYPTION_KEY | 32-byte hex key for AES-256 | Yes |
 | NODE_ENV | Environment (development/production) | Yes |
 | FRONTEND_URL | Frontend URL for CORS | Yes |
+| ML_SERVICE_URL | Python ML service URL (default: http://localhost:5001) | No |
 
 ### Frontend (.env.local)
 | Variable | Description | Required |

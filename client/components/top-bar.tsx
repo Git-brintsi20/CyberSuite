@@ -9,28 +9,41 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Settings, LogOut, User, ChevronDown } from "lucide-react"
+import { Settings, LogOut, User, ChevronDown, Moon, Sun } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/contexts/AuthContext"
 import { NotificationsDropdown } from "@/components/notifications-dropdown"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
+import { useTheme } from "next-themes"
 
 export function TopBar() {
   const { user, logout, isAuthenticated } = useAuth();
   const router = useRouter();
-  const [loggingOut, setLoggingOut] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const handleLogout = async () => {
     try {
-      setLoggingOut(true);
+      setIsLoggingOut(true);
       await logout();
       router.push('/login');
     } catch (error) {
       console.error('Logout failed:', error);
-      setLoggingOut(false);
+      setIsLoggingOut(false);
     }
   };
 
@@ -56,6 +69,19 @@ export function TopBar() {
         {isAuthenticated && (
           <>
             <NotificationsDropdown />
+
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {theme === 'dark' ? (
+                <Sun className="h-5 w-5 text-muted-foreground" />
+              ) : (
+                <Moon className="h-5 w-5 text-muted-foreground" />
+              )}
+            </Button>
 
             <Button 
               variant="ghost" 
@@ -99,10 +125,10 @@ export function TopBar() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   className="text-destructive focus:text-destructive"
-                  onClick={handleLogout}
-                  disabled={loggingOut}
+                  onClick={() => setShowLogoutDialog(true)}
+                  disabled={isLoggingOut}
                 >
-                  {loggingOut ? (
+                  {isLoggingOut ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : (
                     <LogOut className="mr-2 h-4 w-4" />
@@ -114,6 +140,34 @@ export function TopBar() {
           </>
         )}
       </div>
+
+      <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to log out? You will need to sign in again to access your account.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isLoggingOut}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isLoggingOut ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Logging out...
+                </>
+              ) : (
+                'Logout'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </header>
   )
 }
