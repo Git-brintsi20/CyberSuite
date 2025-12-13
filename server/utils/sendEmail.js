@@ -1,53 +1,59 @@
+const nodemailer = require('nodemailer');
+
 /**
- * Email sending utility
- * For development: Logs email to console
- * For production: Configure with nodemailer or email service
+ * Email sending utility using Gmail SMTP
+ * Sends real emails for password reset and notifications
  */
 
 const sendEmail = async (options) => {
   const { email, subject, message, html } = options;
 
-  // In development, just log the email
-  if (process.env.NODE_ENV === 'development') {
-    console.log('\n📧 ========== EMAIL ===========');
-    console.log(`To: ${email}`);
-    console.log(`Subject: ${subject}`);
-    console.log('\nMessage:');
-    console.log(message || html);
-    console.log('==============================\n');
+  try {
+    // Create transporter with Gmail SMTP
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT),
+      secure: false, // Use STARTTLS
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
+      },
+      tls: {
+        rejectUnauthorized: false // Allow self-signed certificates in development
+      }
+    });
+
+    // Verify connection
+    await transporter.verify();
+    console.log('✅ SMTP server connection verified');
+
+    // Email options
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || `CyberSuite Security <${process.env.SMTP_USER}>`,
+      to: email,
+      subject: subject,
+      text: message,
+      html: html || message, // Prefer HTML if provided
+    };
+
+    // Send email
+    const info = await transporter.sendMail(mailOptions);
     
+    console.log('\n📧 ========== EMAIL SENT ===========');
+    console.log(`✅ Message ID: ${info.messageId}`);
+    console.log(`📬 To: ${email}`);
+    console.log(`📝 Subject: ${subject}`);
+    console.log('===================================\n');
+
     return {
       success: true,
-      message: 'Email logged to console (development mode)'
+      messageId: info.messageId,
+      message: 'Email sent successfully'
     };
+  } catch (error) {
+    console.error('❌ Email sending failed:', error.message);
+    throw new Error(`Failed to send email: ${error.message}`);
   }
-
-  // TODO: For production, implement with nodemailer or email service
-  // Example with nodemailer:
-  /*
-  const nodemailer = require('nodemailer');
-  
-  const transporter = nodemailer.createTransporter({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
-    }
-  });
-
-  const info = await transporter.sendMail({
-    from: `${process.env.FROM_NAME} <${process.env.FROM_EMAIL}>`,
-    to: email,
-    subject: subject,
-    text: message,
-    html: html
-  });
-
-  return info;
-  */
-
-  throw new Error('Email service not configured for production');
 };
 
 module.exports = sendEmail;
