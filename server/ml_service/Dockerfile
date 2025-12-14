@@ -1,29 +1,29 @@
-# Dockerize Python ML service
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install build dependencies
+# Install system dependencies for scikit-learn
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
+    make \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements
+# Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install dependencies
+# Upgrade pip and install Python dependencies
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy application files
+# Copy application code
 COPY . .
 
 # Create necessary directories
 RUN mkdir -p data models
 
-# Expose port
+# Expose port (Railway will override this with PORT env var)
 EXPOSE 5001
 
-# Start the Flask app
+# Run the Flask application
 CMD ["python", "app.py"]
