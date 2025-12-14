@@ -34,6 +34,7 @@ const upload = multer({
 const uploadFile = async (req, res) => {
   upload(req, res, async (err) => {
     if (err instanceof multer.MulterError) {
+      console.error('Multer error:', err);
       if (err.code === 'LIMIT_FILE_SIZE') {
         return res.status(400).json({
           success: false,
@@ -45,13 +46,20 @@ const uploadFile = async (req, res) => {
         message: 'File upload error: ' + err.message,
       });
     } else if (err) {
+      console.error('Upload middleware error:', err);
       return res.status(500).json({
         success: false,
-        message: 'Server error during file upload',
+        message: 'Server error during file upload: ' + err.message,
       });
     }
 
     try {
+      // Log request details
+      console.log('Upload request received');
+      console.log('User:', req.user?.email || 'No user');
+      console.log('File:', req.file ? req.file.originalname : 'No file');
+      console.log('Body:', req.body);
+
       // Check if file was uploaded
       if (!req.file) {
         return res.status(400).json({
@@ -71,23 +79,45 @@ const uploadFile = async (req, res) => {
       // Ensure uploads directory exists
       await ensureUploadsDir();
 
+      console.log('Encrypting file...');
       // Encrypt the file
       const { encryptedData, iv, authTag } = encryptFile(req.file.buffer);
+      console.log('File encrypted successfully');
 
       // Generate encrypted filename
       const encryptedName = generateEncryptedFilename(req.file.originalname);
+      console.log('Generated encrypted filename:', encryptedName);
+      
       const filePath = path.join(getUploadsDir(), encryptedName);
+      console.log('File path:', filePath);
 
       // Save encrypted file to disk
+      console.log('Saving encrypted file to disk...');
       await fs.writeFile(filePath, encryptedData);
+      console.log('File saved successfully');
 
       // Determine category from MIME type
       const category = getCategoryFromMimeType(req.file.mimetype);
+      console.log('File category:', category);
 
       // Extract metadata from request body
       const { description, tags } = req.body;
 
+      // Parse tags - handle both comma-separated string and JSON array
+      let parsedTags = [];
+      if (tags) {
+        try {
+          // Try to parse as JSON array first
+          parsedTags = JSON.parse(tags);
+        } catch {
+          // If that fails, treat as comma-separated string
+          parsedTags = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+        }
+      }
+      console.log('Parsed tags:', parsedTags);
+
       // Create file record in database
+      console.log('Creating file record in database...');
       const fileRecord = await File.create({
         user: req.user._id,
         originalName: req.file.originalname,
@@ -98,8 +128,9 @@ const uploadFile = async (req, res) => {
         encryptionIV: iv,
         encryptionAuthTag: authTag,
         description: description || '',
-        tags: tags ? JSON.parse(tags) : [],
+        tags: parsedTags,
       });
+      console.log('File record created successfully:', fileRecord._id);
 
       res.status(201).json({
         success: true,
@@ -118,10 +149,11 @@ const uploadFile = async (req, res) => {
       });
     } catch (error) {
       console.error('Upload file error:', error);
+      console.error('Error stack:', error.stack);
       res.status(500).json({
         success: false,
-        message: 'Failed to upload file',
-        error: error.message,
+        message: 'Failed to upload file: ' + (error.message || 'Unknown error'),
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined,
       });
     }
   });
@@ -134,6 +166,10 @@ const uploadFile = async (req, res) => {
  */
 const getAllFiles = async (req, res) => {
   try {
+    console.log('=== Get All Files Request ===');
+    console.log('User:', req.user.email);
+    console.log('Query params:', req.query);
+    
     const { category, search, sortBy = '-createdAt' } = req.query;
 
     // Build query
@@ -151,10 +187,14 @@ const getAllFiles = async (req, res) => {
       ];
     }
 
+    console.log('Database query:', JSON.stringify(query));
+
     // Fetch files
     const files = await File.find(query)
       .sort(sortBy)
       .select('-encryptionIV -encryptionAuthTag -encryptedName');
+
+    console.log('Found files:', files.length);
 
     // Format response
     const formattedFiles = files.map((file) => ({
@@ -173,6 +213,9 @@ const getAllFiles = async (req, res) => {
       updatedAt: file.updatedAt,
     }));
 
+    console.log('Formatted files:', formattedFiles.length);
+    console.log('First file:', formattedFiles[0]);
+
     // Calculate storage stats
     const totalSize = files.reduce((sum, file) => sum + file.fileSize, 0);
     const categoryCounts = files.reduce((acc, file) => {
@@ -180,16 +223,29 @@ const getAllFiles = async (req, res) => {
       return acc;
     }, {});
 
-    res.status(200).json({
+    console.log('Stats:', { totalFiles: files.length, totalSize, categoryCounts });
+
+    const responseData = {
       success: true,
-      data: formattedFiles,
+      files: formattedFiles,
       stats: {
         totalFiles: files.length,
         totalSize,
         formattedTotalSize: formatFileSize(totalSize),
-        categoryCounts,
+        categoryCounts: {
+          document: 0,
+          image: 0,
+          video: 0,
+          audio: 0,
+          other: 0,
+          ...categoryCounts,
+        },
       },
-    });
+    };
+
+    console.log('Sending response with', responseData.files.length, 'files');
+    
+    res.status(200).json(responseData);
   } catch (error) {
     console.error('Get files error:', error);
     res.status(500).json({

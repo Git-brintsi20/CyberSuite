@@ -112,7 +112,9 @@ export default function SettingsPage() {
   };
 
   const handleThemeChange = (value: string) => {
-    setSettings(prev => ({ ...prev, theme: value as 'light' | 'dark' | 'system' }));
+    const newTheme = value as 'light' | 'dark' | 'system';
+    setSettings(prev => ({ ...prev, theme: newTheme }));
+    setTheme(newTheme); // Apply theme immediately
   };
 
   if (authLoading || !isAuthenticated || loading) {

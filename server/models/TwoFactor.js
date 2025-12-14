@@ -38,7 +38,6 @@ const twoFactorSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-// Index for faster lookups
-twoFactorSchema.index({ user: 1 });
+// No need for explicit index - 'unique: true' on user field already creates it
 
 module.exports = mongoose.model('TwoFactor', twoFactorSchema);

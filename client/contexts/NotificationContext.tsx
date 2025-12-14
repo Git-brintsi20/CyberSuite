@@ -48,8 +48,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         setUnreadCount(response.data.unreadCount);
       }
     } catch (error: any) {
-      // Silently fail if user is not authenticated or server is down
-      if (error?.status === 401 || error?.message?.includes('Network Error')) {
+      // Silently fail for auth errors, network issues, or timeouts
+      if (error?.status === 401 || error?.status === 0 || error?.message?.includes('timeout')) {
         setNotifications([]);
         setUnreadCount(0);
       } else {

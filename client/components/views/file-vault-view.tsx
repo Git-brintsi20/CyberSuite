@@ -94,25 +94,69 @@ export function FileVaultView() {
   const loadFiles = async () => {
     try {
       setLoading(true)
-      const params: any = { sortBy }
+      
+      // Map frontend sortBy to backend format
+      const sortByMap: Record<string, string> = {
+        'date-desc': '-createdAt',
+        'date-asc': 'createdAt',
+        'name-asc': 'originalName',
+        'name-desc': '-originalName',
+        'size-desc': '-fileSize',
+        'size-asc': 'fileSize',
+      }
+      
+      const params: any = { sortBy: sortByMap[sortBy] || '-createdAt' }
       if (categoryFilter !== "all") {
         params.category = categoryFilter
       }
       if (searchQuery) {
         params.search = searchQuery
       }
+      
+      console.log('=== Loading Files ===')
+      console.log('Params:', params)
+      
       const response = await fileAPI.getAll(params)
-      setFiles(response.data.files)
-      setStats(response.data.stats)
+      
+      console.log('Full Response:', JSON.stringify(response, null, 2))
+      console.log('Response.data:', JSON.stringify(response.data, null, 2))
+      
+      const filesData = response.data?.files || response.data || []
+      const statsData = response.data?.stats || null
+      
+      console.log('Extracted files:', filesData)
+      console.log('Extracted stats:', statsData)
+      console.log('Files is array?', Array.isArray(filesData))
+      console.log('Files length:', filesData.length)
+      
+      setFiles(filesData)
+      setStats(statsData)
+      
+      console.log('State updated - Files:', filesData.length, 'Stats:', statsData)
     } catch (error: any) {
+      console.error('Load files error:', error)
+      setFiles([]) // Ensure files is always an array
+      
+      // The API interceptor transforms errors to { status, message, errors }
+      let errorMessage = "Failed to load files"
+      if (error.message) {
+        errorMessage = error.message
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message
+      }
+      
       toast({
-        title: "Error",
-        description: error.response?.data?.message || "Failed to load files",
+        title: "Error Loading Files",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleUploadButtonClick = () => {
+    fileInputRef.current?.click()
   }
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,7 +168,17 @@ export function FileVaultView() {
   }
 
   const handleUpload = async () => {
-    if (!selectedFile) return
+    if (!selectedFile) {
+      toast({
+        title: "Error",
+        description: "Please select a file to upload",
+        variant: "destructive",
+      })
+      return
+    }
+
+    console.log('=== Starting Upload Process ===')
+    console.log('Backend URL:', process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api')
 
     try {
       setUploading(true)
@@ -139,12 +193,21 @@ export function FileVaultView() {
         formData.append("tags", uploadTags)
       }
 
-      await fileAPI.upload(formData, (progressEvent) => {
+      console.log('=== Upload Debug Info ===')
+      console.log('File:', selectedFile.name, 'Size:', selectedFile.size, 'Type:', selectedFile.type)
+      console.log('Description:', uploadDescription)
+      console.log('Tags:', uploadTags)
+
+      console.log('Calling fileAPI.upload...')
+      const response = await fileAPI.upload(formData, (progressEvent) => {
         const progress = progressEvent.total
           ? Math.round((progressEvent.loaded * 100) / progressEvent.total)
           : 0
+        console.log('Upload progress:', progress + '%')
         setUploadProgress(progress)
       })
+
+      console.log('Upload successful! Response:', response)
 
       toast({
         title: "Success",
@@ -164,9 +227,33 @@ export function FileVaultView() {
       // Reload files
       loadFiles()
     } catch (error: any) {
+      console.error('=== Upload Error ===')
+      console.error('Error object:', error)
+      console.error('Error type:', typeof error)
+      console.error('Error keys:', Object.keys(error || {}))
+      console.error('Error.message:', error?.message)
+      console.error('Error.response:', error?.response)
+      console.error('Error.request:', error?.request)
+      console.error('Error.status:', error?.status)
+      console.error('Error stack:', error?.stack)
+      
+      // The API interceptor transforms errors to { status, message, errors }
+      let errorMessage = "Failed to upload file. Please try again."
+      
+      if (error?.message) {
+        errorMessage = error.message
+      } else if (typeof error === 'string') {
+        errorMessage = error
+      } else if (error?.response?.data?.message) {
+        // Fallback for non-intercepted errors
+        errorMessage = error.response.data.message
+      } else if (error?.status === 0) {
+        errorMessage = "Cannot connect to server. Please check if the backend is running."
+      }
+      
       toast({
-        title: "Error",
-        description: error.response?.data?.message || "Failed to upload file",
+        title: "Upload Failed",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
@@ -196,7 +283,7 @@ export function FileVaultView() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.response?.data?.message || "Failed to download file",
+        description: error.message || error.response?.data?.message || "Failed to download file",
         variant: "destructive",
       })
     }
@@ -215,7 +302,7 @@ export function FileVaultView() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.response?.data?.message || "Failed to delete file",
+        description: error.message || error.response?.data?.message || "Failed to delete file",
         variant: "destructive",
       })
     }
@@ -236,7 +323,7 @@ export function FileVaultView() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.response?.data?.message || "Failed to delete files",
+        description: error.message || error.response?.data?.message || "Failed to delete files",
         variant: "destructive",
       })
     }
@@ -504,7 +591,15 @@ export function FileVaultView() {
           </CardContent>
         </Card>
       ) : viewMode === "grid" ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div 
+          className={`grid gap-4 md:grid-cols-2 lg:grid-cols-3 rounded-lg transition-colors ${
+            isDragging ? "ring-2 ring-primary ring-offset-2 bg-primary/5" : ""
+          }`}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
           {files.map((file) => (
             <Card key={file._id} className="relative">
               <CardHeader>
@@ -580,7 +675,15 @@ export function FileVaultView() {
           ))}
         </div>
       ) : (
-        <Card>
+        <Card 
+          className={`transition-colors ${
+            isDragging ? "ring-2 ring-primary ring-offset-2 bg-primary/5" : ""
+          }`}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
           <CardContent className="p-0">
             <div className="divide-y">
               {files.map((file) => (

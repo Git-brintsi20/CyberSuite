@@ -8,7 +8,15 @@ const Credential = require('../models/Credential');
 // Validation schemas
 const addCredentialSchema = z.object({
   siteName: z.string().min(1, 'Site name is required'),
-  siteUrl: z.string().url('Invalid URL').optional().or(z.literal('')),
+  siteUrl: z.string().optional().refine(
+    (val) => {
+      if (!val || val === '') return true;
+      // Allow both full URLs (https://example.com) and simple domains (example.com)
+      const urlPattern = /^(https?:\/\/)?([\w.-]+\.[a-zA-Z]{2,})(\/.*)?$/;
+      return urlPattern.test(val);
+    },
+    { message: 'Invalid URL or domain format' }
+  ),
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(1, 'Password is required'),
   category: z.enum(['social', 'email', 'banking', 'work', 'shopping', 'other']).optional(),
@@ -17,7 +25,15 @@ const addCredentialSchema = z.object({
 
 const updateCredentialSchema = z.object({
   siteName: z.string().min(1).optional(),
-  siteUrl: z.string().url().optional().or(z.literal('')),
+  siteUrl: z.string().optional().refine(
+    (val) => {
+      if (!val || val === '') return true;
+      // Allow both full URLs (https://example.com) and simple domains (example.com)
+      const urlPattern = /^(https?:\/\/)?([\w.-]+\.[a-zA-Z]{2,})(\/.*)?$/;
+      return urlPattern.test(val);
+    },
+    { message: 'Invalid URL or domain format' }
+  ),
   username: z.string().min(1).optional(),
   password: z.string().min(1).optional(),
   category: z.enum(['social', 'email', 'banking', 'work', 'shopping', 'other']).optional(),
@@ -121,7 +137,7 @@ router.post('/', protect, async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Validation error',
-        errors: error.errors.map(e => ({ field: e.path[0], message: e.message }))
+        errors: (error.errors || []).map(e => ({ field: e.path[0], message: e.message }))
       });
     }
 
@@ -185,7 +201,7 @@ router.put('/:id', protect, async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Validation error',
-        errors: error.errors.map(e => ({ field: e.path[0], message: e.message }))
+        errors: (error.errors || []).map(e => ({ field: e.path[0], message: e.message }))
       });
     }
 

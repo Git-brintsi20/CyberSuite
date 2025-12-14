@@ -312,56 +312,72 @@ export function TwoFactorSettings() {
 
       {/* Verification Dialog with QR Code */}
       <Dialog open={verifyDialogOpen} onOpenChange={setVerifyDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Scan QR Code</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl">Scan QR Code</DialogTitle>
+            <DialogDescription className="text-base">
               Scan this QR code with your authenticator app, then enter the 6-digit code below.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-6 py-4">
             {setupData && (
               <>
-                <div className="flex justify-center p-4 bg-white rounded-lg">
+                {/* QR Code */}
+                <div className="flex justify-center p-6 bg-white dark:bg-white rounded-lg border-2 border-border">
                   <Image
                     src={setupData.qrCode}
                     alt="2FA QR Code"
-                    width={200}
-                    height={200}
+                    width={240}
+                    height={240}
                     className="rounded"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-sm text-muted-foreground">
+                
+                {/* Manual Entry Code */}
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium">
                     Can't scan? Enter this code manually:
                   </Label>
-                  <div className="flex items-center gap-2 p-2 bg-muted rounded font-mono text-sm">
-                    <span className="flex-1">{setupData.secret}</span>
+                  <div className="flex items-center gap-2 p-3 bg-muted rounded-lg border border-border">
+                    <code className="flex-1 font-mono text-sm break-all select-all">
+                      {setupData.secret}
+                    </code>
                     <Button
                       size="sm"
-                      variant="ghost"
+                      variant="outline"
                       onClick={() => copyToClipboard(setupData.secret)}
+                      className="shrink-0"
                     >
                       <Copy className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="verificationCode">Enter 6-digit code</Label>
+                
+                {/* Verification Code Input */}
+                <div className="space-y-3">
+                  <Label htmlFor="verificationCode" className="text-sm font-medium">
+                    Enter 6-digit code
+                  </Label>
                   <Input
                     id="verificationCode"
                     type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     maxLength={6}
-                    placeholder="000000"
+                    placeholder="● ● ● ● ● ●"
                     value={verificationCode}
                     onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, ""))}
-                    className="text-center text-lg tracking-widest"
+                    className="text-center text-2xl tracking-[0.5em] font-mono h-14"
+                    autoComplete="off"
                   />
+                  <p className="text-xs text-muted-foreground text-center">
+                    Enter the code from your authenticator app
+                  </p>
                 </div>
               </>
             )}
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button
               variant="outline"
               onClick={() => {
@@ -375,8 +391,16 @@ export function TwoFactorSettings() {
             <Button
               onClick={handleVerify}
               disabled={loading || verificationCode.length !== 6}
+              className="min-w-[140px]"
             >
-              {loading ? "Verifying..." : "Verify & Enable"}
+              {loading ? (
+                <>
+                  <div className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
+                  Verifying...
+                </>
+              ) : (
+                "Verify & Enable"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -3,44 +3,44 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Cybersecurity dark theme with Emerald Green accent and Slate-950 background */
+/* Light theme with Emerald Green accent */
 :root {
-  --background: oklch(0.0975 0.005 264);
-  --foreground: oklch(0.97 0.005 264);
-  --card: oklch(0.13 0.008 264);
-  --card-foreground: oklch(0.97 0.005 264);
-  --popover: oklch(0.13 0.008 264);
-  --popover-foreground: oklch(0.97 0.005 264);
-  --primary: oklch(0.696 0.17 162);
-  --primary-foreground: oklch(0.0975 0.005 264);
-  --secondary: oklch(0.16 0.008 264);
-  --secondary-foreground: oklch(0.97 0.005 264);
-  --muted: oklch(0.2 0.008 264);
-  --muted-foreground: oklch(0.55 0.01 264);
-  --accent: oklch(0.696 0.17 162);
-  --accent-foreground: oklch(0.0975 0.005 264);
+  --background: oklch(0.99 0.002 264);
+  --foreground: oklch(0.15 0.008 264);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.008 264);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.008 264);
+  --primary: oklch(0.55 0.15 162);
+  --primary-foreground: oklch(0.99 0.002 264);
+  --secondary: oklch(0.96 0.005 264);
+  --secondary-foreground: oklch(0.15 0.008 264);
+  --muted: oklch(0.96 0.005 264);
+  --muted-foreground: oklch(0.48 0.01 264);
+  --accent: oklch(0.55 0.15 162);
+  --accent-foreground: oklch(0.99 0.002 264);
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.97 0.005 264);
-  --border: oklch(0.22 0.01 264);
-  --input: oklch(0.22 0.01 264);
-  --ring: oklch(0.696 0.17 162);
-  --chart-1: oklch(0.696 0.17 162);
-  --chart-2: oklch(0.75 0.15 180);
-  --chart-3: oklch(0.7 0.15 195);
-  --chart-4: oklch(0.65 0.12 210);
-  --chart-5: oklch(0.6 0.1 160);
+  --destructive-foreground: oklch(0.99 0.002 264);
+  --border: oklch(0.92 0.005 264);
+  --input: oklch(0.92 0.005 264);
+  --ring: oklch(0.55 0.15 162);
+  --chart-1: oklch(0.55 0.15 162);
+  --chart-2: oklch(0.50 0.14 180);
+  --chart-3: oklch(0.48 0.14 195);
+  --chart-4: oklch(0.52 0.12 210);
+  --chart-5: oklch(0.54 0.11 160);
   --radius: 0.625rem;
-  --sidebar: oklch(0.11 0.006 264);
-  --sidebar-foreground: oklch(0.97 0.005 264);
-  --sidebar-primary: oklch(0.696 0.17 162);
-  --sidebar-primary-foreground: oklch(0.0975 0.005 264);
-  --sidebar-accent: oklch(0.16 0.008 264);
-  --sidebar-accent-foreground: oklch(0.97 0.005 264);
-  --sidebar-border: oklch(0.22 0.01 264);
-  --sidebar-ring: oklch(0.696 0.17 162);
+  --sidebar: oklch(0.98 0.003 264);
+  --sidebar-foreground: oklch(0.15 0.008 264);
+  --sidebar-primary: oklch(0.55 0.15 162);
+  --sidebar-primary-foreground: oklch(0.99 0.002 264);
+  --sidebar-accent: oklch(0.96 0.005 264);
+  --sidebar-accent-foreground: oklch(0.15 0.008 264);
+  --sidebar-border: oklch(0.92 0.005 264);
+  --sidebar-ring: oklch(0.55 0.15 162);
 }
 
-/* Keep same dark theme since we're always dark */
+/* Dark theme with Emerald Green accent and Slate-950 background */
 .dark {
   --background: oklch(0.0975 0.005 264);
   --foreground: oklch(0.97 0.005 264);

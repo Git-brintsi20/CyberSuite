@@ -7,7 +7,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000, // 10 seconds timeout
+  timeout: 30000, // 30 seconds timeout
 });
 
 // Request interceptor
@@ -43,10 +43,12 @@ api.interceptors.response.use(
       }
 
       // Return structured error
+      const errorMessage = data?.message || data?.error || 'An error occurred';
       return Promise.reject({
         status,
-        message: data.message || 'An error occurred',
-        errors: data.errors || []
+        message: errorMessage,
+        errors: data?.errors || [],
+        details: data // Include full data for debugging
       });
     } else if (error.request) {
       // Request made but no response
@@ -142,7 +144,7 @@ export const fileAPI = {
     return api.get(`/files/${id}/download`, {
       responseType: 'blob',
       timeout: 60000, // 60 seconds for downloads
-    });
+    }).then(response => response.data); // Return the blob data directly
   },
   update: (id, data) => api.put(`/files/${id}`, data),
   delete: (id) => api.delete(`/files/${id}`),

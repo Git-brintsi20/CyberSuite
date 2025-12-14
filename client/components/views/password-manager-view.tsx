@@ -129,15 +129,31 @@ export function PasswordManagerView() {
     try {
       setAnalyzingPassword(true)
       const response = await mlAPI.analyzePassword(password)
-      if (response.data && response.data.status === 'success') {
-        setPasswordAnalysis(response.data.analysis)
-      } else if (response.data && response.data.basicAnalysis) {
-        // ML service unavailable, show basic analysis
-        setPasswordAnalysis({
-          strength: response.data.basicAnalysis.strength,
-          score: response.data.basicAnalysis.strength === 'strong' ? 0.9 : 0.5,
-          feedback: [response.data.basicAnalysis.message || 'Basic analysis only'],
-        })
+      
+      if (response.data) {
+        // Check if it's a successful ML analysis
+        if (response.data.score !== undefined && response.data.strength) {
+          // ML service response format: {score, strength, vulnerabilities, suggestions, crackTime, entropy}
+          setPasswordAnalysis({
+            strength: response.data.strength,
+            score: response.data.score / 100, // Convert from 0-100 to 0-1
+            feedback: [
+              ...response.data.suggestions || [],
+              ...(response.data.crackTime ? [`Estimated crack time: ${response.data.crackTime}`] : []),
+              ...(response.data.entropy ? [`Entropy: ${response.data.entropy} bits`] : [])
+            ],
+            vulnerabilities: response.data.vulnerabilities || [],
+            crackTime: response.data.crackTime,
+            entropy: response.data.entropy
+          })
+        } else if (response.data.basicAnalysis) {
+          // ML service unavailable, show basic analysis
+          setPasswordAnalysis({
+            strength: response.data.basicAnalysis.strength,
+            score: response.data.basicAnalysis.strength === 'strong' ? 0.9 : 0.5,
+            feedback: [response.data.basicAnalysis.message || 'Basic analysis only'],
+          })
+        }
       }
     } catch (error: any) {
       console.error('Password analysis error:', error)
@@ -145,7 +161,7 @@ export function PasswordManagerView() {
       setPasswordAnalysis({
         strength: password.length >= 12 ? 'strong' : 'medium',
         score: password.length >= 12 ? 0.8 : 0.5,
-        feedback: ['ML analysis unavailable'],
+        feedback: ['ML analysis unavailable - service not running'],
       })
     } finally {
       setAnalyzingPassword(false)
@@ -179,7 +195,7 @@ export function PasswordManagerView() {
   }
 
   // Filter and sort credentials
-  const filteredAndSortedCredentials = credentials
+  const filteredAndSortedCredentials = (credentials || [])
     .filter(cred => {
       // Search filter
       const matchesSearch = searchQuery === "" || 
@@ -214,6 +230,7 @@ export function PasswordManagerView() {
         setCredentials(response.data.data || [])
       }
     } catch (error: any) {
+      setCredentials([]) // Ensure credentials is always an array
       toast.error(error.message || "Failed to load credentials")
       console.error("Fetch error:", error)
     } finally {
@@ -312,7 +329,17 @@ export function PasswordManagerView() {
         toast.success("Credential added successfully")
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to add credential")
+      // Show specific validation errors if available
+      if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+        const errorMessages = error.response.data.errors
+          .map((err: any) => `${err.field}: ${err.message}`)
+          .join(', ');
+        toast.error(errorMessages);
+      } else if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error(error.message || "Failed to add credential");
+      }
     }
   }
 
@@ -334,7 +361,7 @@ export function PasswordManagerView() {
       })
 
       if (response.data.success) {
-        setCredentials(prev => prev.map(cred => 
+        setCredentials(prev => (prev || []).map(cred => 
           cred._id === editingCredential._id ? response.data.data : cred
         ))
         setIsEditOpen(false)
@@ -342,7 +369,17 @@ export function PasswordManagerView() {
         toast.success("Credential updated successfully")
       }
     } catch (error: any) {
-      toast.error(error.message || "Failed to update credential")
+      // Show specific validation errors if available
+      if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+        const errorMessages = error.response.data.errors
+          .map((err: any) => `${err.field}: ${err.message}`)
+          .join(', ');
+        toast.error(errorMessages);
+      } else if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error(error.message || "Failed to update credential");
+      }
     }
   }
 
@@ -709,26 +746,26 @@ export function PasswordManagerView() {
 
             {/* ML Password Strength Analysis */}
             {passwordAnalysis && (
-              <div className="space-y-2 rounded-lg border border-border bg-secondary/30 p-4">
+              <div className="space-y-3 rounded-lg border border-border bg-secondary/30 p-4">
                 <div className="flex items-center justify-between">
                   <Label className="text-sm font-medium">ML Strength Analysis</Label>
-                  {passwordAnalysis.strength === 'strong' || passwordAnalysis.strength === 'very strong' ? (
+                  {passwordAnalysis.strength === 'strong' || passwordAnalysis.strength === 'very-strong' ? (
                     <ShieldCheck className="h-5 w-5 text-green-500" />
                   ) : (
                     <ShieldAlert className="h-5 w-5 text-amber-500" />
                   )}
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Strength:</span>
                     <span className={`font-medium ${
-                      passwordAnalysis.strength === 'strong' || passwordAnalysis.strength === 'very strong' 
+                      passwordAnalysis.strength === 'strong' || passwordAnalysis.strength === 'very-strong' 
                         ? 'text-green-500' 
                         : passwordAnalysis.strength === 'medium' 
                         ? 'text-amber-500' 
                         : 'text-red-500'
                     }`}>
-                      {passwordAnalysis.strength.charAt(0).toUpperCase() + passwordAnalysis.strength.slice(1)}
+                      {passwordAnalysis.strength.replace('-', ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                     </span>
                   </div>
                   {passwordAnalysis.score !== undefined && (
@@ -748,9 +785,35 @@ export function PasswordManagerView() {
                       </div>
                     </div>
                   )}
+                  
+                  {/* Show crack time if available */}
+                  {passwordAnalysis.crackTime && (
+                    <div className="text-xs text-muted-foreground pt-1">
+                      <span className="font-medium">Crack Time:</span> {passwordAnalysis.crackTime}
+                    </div>
+                  )}
+                  
+                  {/* Show vulnerabilities if any */}
+                  {passwordAnalysis.vulnerabilities && passwordAnalysis.vulnerabilities.length > 0 && (
+                    <div className="pt-1 space-y-1">
+                      <div className="text-xs font-medium text-red-500">Vulnerabilities:</div>
+                      <ul className="text-xs text-muted-foreground space-y-0.5 pl-3">
+                        {passwordAnalysis.vulnerabilities.map((vuln: string, idx: number) => (
+                          <li key={idx} className="list-disc">{vuln}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {/* Show suggestions */}
                   {passwordAnalysis.feedback && passwordAnalysis.feedback.length > 0 && (
-                    <div className="mt-2 text-xs text-muted-foreground">
-                      {passwordAnalysis.feedback[0]}
+                    <div className="pt-1 space-y-1">
+                      <div className="text-xs font-medium text-green-600">Tips:</div>
+                      <ul className="text-xs text-muted-foreground space-y-0.5 pl-3">
+                        {passwordAnalysis.feedback.slice(0, 3).map((tip: string, idx: number) => (
+                          <li key={idx} className="list-disc">{tip}</li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                 </div>

@@ -73,13 +73,18 @@ export function TopBar() {
             <Button 
               variant="ghost" 
               size="icon"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              onClick={() => {
+                const newTheme = theme === 'dark' ? 'light' : theme === 'light' ? 'system' : 'dark';
+                setTheme(newTheme);
+              }}
+              title={`Current: ${theme || 'system'} - Click to change`}
             >
               {theme === 'dark' ? (
                 <Sun className="h-5 w-5 text-muted-foreground" />
-              ) : (
+              ) : theme === 'light' ? (
                 <Moon className="h-5 w-5 text-muted-foreground" />
+              ) : (
+                <Sun className="h-5 w-5 text-muted-foreground" />
               )}
             </Button>
 

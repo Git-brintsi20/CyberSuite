@@ -18,7 +18,7 @@ export default function DevRoutesPage() {
     { path: "/education/[courseId]/[lessonId]", name: "Lesson Viewer", protected: true },
   ]
 
-  const apiRoutes = [
+  const apiRoutes: Array<{ method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"; path: string; name: string; protected: boolean }> = [
     // Auth routes
     { method: "POST", path: "/api/auth/register", name: "Register User", protected: false },
     { method: "POST", path: "/api/auth/login", name: "Login User", protected: false },

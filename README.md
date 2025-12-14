@@ -141,7 +141,18 @@ The Cybersecurity Applications Suite implements defense-in-depth security princi
 - **Rainbow Table Resistance**: Pre-computation attack mitigation
 - **Password Policy Enforcement**: Minimum complexity requirements
 
-### 🔐 **Data Encryption**
+### � **Email & Password Reset**
+
+#### **Secure Password Reset Flow**
+- **Email Integration**: Real SMTP email delivery via Gmail or custom SMTP server
+- **Crypto-Secure Tokens**: 32-byte random tokens with SHA-256 hashing
+- **Time-Limited Tokens**: 10-minute expiration for security
+- **Single-Use Tokens**: Tokens invalidated after successful password reset
+- **Professional Email Templates**: HTML-formatted emails with purple branding
+- **Frontend Pages**: Dedicated forgot-password and reset-password/[token] pages
+- **SMTP Configuration**: Supports Gmail App Passwords and custom SMTP servers
+
+### �🔐 **Data Encryption**
 
 #### **AES-256-GCM Implementation**
 ```
@@ -201,6 +212,7 @@ Implemented via Helmet.js:
 | Multer | 2+ | File upload middleware |
 | Speakeasy | 2+ | TOTP 2FA implementation |
 | QRCode | 1+ | QR code generation for 2FA |
+| Nodemailer | 6+ | Email sending (SMTP) for password reset |
 | **Python** | **3.x** | **ML microservice runtime** |
 | **Flask** | **3.0.0** | **ML API framework** |
 | **scikit-learn** | **1.3.2** | **Machine learning library** |
@@ -252,6 +264,13 @@ ENCRYPTION_KEY=your_64_character_hex_key
 PORT=5000
 NODE_ENV=development
 FRONTEND_URL=http://localhost:3000
+
+# Email Configuration (for password reset)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=your_app_password_here
+EMAIL_FROM=CyberSuite <your_email@gmail.com>
 
 # ML Service Configuration (optional)
 ML_SERVICE_URL=http://localhost:5001

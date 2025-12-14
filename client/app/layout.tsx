@@ -49,7 +49,7 @@ export default function RootLayout({
       <body className={`font-sans antialiased`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
@@ -59,13 +59,13 @@ export default function RootLayout({
             </NotificationProvider>
           </AuthProvider>
           <Toaster
-            theme="dark"
             position="top-right"
             toastOptions={{
-              style: {
-                background: "#1e293b",
-                border: "1px solid #334155",
-                color: "#f1f5f9",
+              classNames: {
+                toast: 'bg-card border-border text-foreground',
+                description: 'text-muted-foreground',
+                actionButton: 'bg-primary text-primary-foreground',
+                cancelButton: 'bg-muted text-muted-foreground',
               },
             }}
           />

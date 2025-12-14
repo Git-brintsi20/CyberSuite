@@ -78,8 +78,14 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <div className="flex items-center justify-center mb-4">
-            <Shield className="h-12 w-12 text-purple-600" />
+          <div className="flex items-center justify-between mb-4">
+            <Link href="/" className="text-sm text-muted-foreground hover:text-purple-600 transition-colors">
+              ← Back to Home
+            </Link>
+            <div className="flex items-center justify-center flex-1">
+              <Shield className="h-12 w-12 text-purple-600" />
+            </div>
+            <div className="w-24"></div> {/* Spacer for centering */}
           </div>
           <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
           <CardDescription className="text-center">
