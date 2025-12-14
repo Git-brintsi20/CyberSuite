@@ -83,15 +83,20 @@ The **Cybersecurity Applications Suite** is an enterprise-grade, full-stack secu
 - **Secure Download**: Automatic file decryption on download
 
 ### 🎓 **Security Education Hub**
-*Interactive OWASP Top 10 training platform with progress tracking*
+*Tailored cybersecurity training to help users master CyberSuite and stay safe online*
 
-- **OWASP Top 10 Coverage**: Complete curriculum on critical web vulnerabilities
-- **Interactive Lessons**: Step-by-step courses with markdown content rendering
-- **Progress Tracking**: Comprehensive analytics on learning completion
+- **CyberSuite-Specific Courses**: 3 comprehensive courses designed specifically for this application:
+  - **CyberSuite Security Essentials** (Beginner, 2.5 hours) - Master password security, file encryption, and threat protection
+  - **File Vault & Encryption Mastery** (Beginner, 2 hours) - Learn AES-256 encryption and secure file management
+  - **Network Security & Scanner Guide** (Intermediate, 2 hours) - Use the network scanner safely and secure your home network
+  
+- **Interactive Lessons**: Step-by-step courses with markdown content rendering and real-world examples
+- **Practical Focus**: Each lesson teaches users how to use CyberSuite tools effectively
+- **Progress Tracking**: Comprehensive analytics on learning completion with lesson-by-lesson tracking
 - **Lesson Navigation**: Previous/Next navigation with auto-advance on completion
-- **Course Completion**: Real-time progress indicators and completion tracking
-- **Vulnerability Demonstrations**: Safe, sandboxed environment for exploit education
-- **Regular Updates**: Content synchronized with latest OWASP guidelines
+- **Real-World Scenarios**: Courses include actual security threats and how CyberSuite protects against them
+- **Best Practices**: Security hygiene, password strategies, encryption fundamentals, and network protection
+- **Legal & Ethical Guidance**: Proper use of security tools with legal boundaries clearly explained
 
 ### 🤖 **ML-Powered Security Intelligence**
 *Machine learning-based anomaly detection and threat analysis*

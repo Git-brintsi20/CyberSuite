@@ -90,22 +90,8 @@ export function EducationView() {
   }
 
   const startCourse = async (courseId: string) => {
-    try {
-      // Fetch course details to get first lesson
-      const response = await educationAPI.getCourse(courseId)
-      if (response.data.success && response.data.data.modules.length > 0) {
-        const firstModule = response.data.data.modules[0]
-        if (firstModule.lessons.length > 0) {
-          const firstLesson = firstModule.lessons[0]
-          router.push(`/education/${courseId}/${firstLesson.lessonId}`)
-        } else {
-          toast.error("No lessons available in this course")
-        }
-      }
-    } catch (error: any) {
-      toast.error("Failed to start course")
-      console.error("Start course error:", error)
-    }
+    // Navigate to course overview page
+    router.push(`/education/${courseId}`)
   }
 
   if (loading) {

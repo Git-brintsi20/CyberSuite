@@ -17,8 +17,20 @@ const getCourses = async (req, res) => {
     
     const coursesWithProgress = courses.map(course => {
       const progress = progressData.find(p => p.courseId === course.courseId);
+      const courseObj = course.toObject();
+      
+      // Transform modules and lessons to include IDs as strings
+      courseObj.modules = courseObj.modules.map(module => ({
+        ...module,
+        moduleId: `${course.courseId}-module-${module.id}`,
+        lessons: module.lessons.map(lesson => ({
+          ...lesson,
+          lessonId: `${course.courseId}-lesson-${module.id}-${lesson.id}`
+        }))
+      }));
+      
       return {
-        ...course.toObject(),
+        ...courseObj,
         progress: progress ? progress.progress : 0,
         lessonsCount: course.modules.reduce((sum, mod) => sum + mod.lessons.length, 0)
       };
@@ -60,10 +72,22 @@ const getCourse = async (req, res) => {
       courseId: course.courseId
     });
 
+    const courseObj = course.toObject();
+    
+    // Transform modules and lessons to include IDs as strings
+    courseObj.modules = courseObj.modules.map(module => ({
+      ...module,
+      moduleId: `${course.courseId}-module-${module.id}`,
+      lessons: module.lessons.map(lesson => ({
+        ...lesson,
+        lessonId: `${course.courseId}-lesson-${module.id}-${lesson.id}`
+      }))
+    }));
+
     res.status(200).json({
       success: true,
       data: {
-        ...course.toObject(),
+        ...courseObj,
         userProgress: progress || { progress: 0, completedLessons: [] }
       }
     });
@@ -83,14 +107,20 @@ const getCourse = async (req, res) => {
  */
 const updateProgress = async (req, res) => {
   try {
-    const { courseId, moduleId, lessonId } = req.body;
+    const { courseId, lessonId } = req.body;
 
-    if (!courseId || moduleId === undefined || lessonId === undefined) {
+    if (!courseId || !lessonId) {
       return res.status(400).json({
         success: false,
-        message: 'courseId, moduleId, and lessonId are required'
+        message: 'courseId and lessonId are required'
       });
     }
+
+    // Extract moduleId and lessonId from the composite lessonId
+    // Format: courseId-lesson-moduleId-lessonId
+    const lessonIdParts = lessonId.split('-');
+    const moduleIdNum = parseInt(lessonIdParts[lessonIdParts.length - 2]);
+    const lessonIdNum = parseInt(lessonIdParts[lessonIdParts.length - 1]);
 
     // Find or create progress
     let progress = await UserProgress.findOne({
@@ -108,13 +138,13 @@ const updateProgress = async (req, res) => {
 
     // Check if lesson already completed
     const alreadyCompleted = progress.completedLessons.some(
-      cl => cl.moduleId === moduleId && cl.lessonId === lessonId
+      cl => cl.moduleId === moduleIdNum && cl.lessonId === lessonIdNum
     );
 
     if (!alreadyCompleted) {
       progress.completedLessons.push({
-        moduleId,
-        lessonId,
+        moduleId: moduleIdNum,
+        lessonId: lessonIdNum,
         completedAt: new Date()
       });
 

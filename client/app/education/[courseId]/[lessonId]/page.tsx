@@ -214,120 +214,168 @@ export default function LessonPage() {
               <Badge variant="outline">{currentModule.title}</Badge>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Clock className="h-4 w-4" />
-                {currentLesson.duration}
+                {currentLesson.duration} min
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Card className="border-border bg-card">
-          <CardHeader className="space-y-4">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <CardTitle className="text-3xl text-foreground">{currentLesson.title}</CardTitle>
-                <CardDescription className="mt-2">
-                  Module: {currentModule.title}
-                </CardDescription>
-              </div>
-              {isLessonComplete && (
-                <Badge className="bg-primary/20 text-primary">
-                  <CheckCircle className="mr-1 h-3 w-3" />
-                  Completed
-                </Badge>
-              )}
-            </div>
-            
-            {/* Progress Bar */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Course Progress</span>
-                <span className="text-primary font-medium">{Math.round(userProgress.progress)}%</span>
-              </div>
-              <Progress value={userProgress.progress} className="h-2" />
-            </div>
-          </CardHeader>
+      {/* Main Content with Sidebar */}
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Sidebar - Course Navigation */}
+          <div className="lg:col-span-1">
+            <Card className="border-border bg-card sticky top-24">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium">Course Content</CardTitle>
+                <div className="mt-2">
+                  <Progress value={userProgress.progress} className="h-2" />
+                  <p className="text-xs text-muted-foreground mt-1">{Math.round(userProgress.progress)}% complete</p>
+                </div>
+              </CardHeader>
+              <Separator />
+              <CardContent className="p-0">
+                <div className="max-h-[calc(100vh-250px)] overflow-y-auto">
+                  {course.modules.map((module) => (
+                    <div key={module.moduleId} className="border-b border-border last:border-0">
+                      <div className="p-3 bg-secondary/30">
+                        <h4 className="text-xs font-semibold text-foreground">{module.title}</h4>
+                      </div>
+                      <div className="divide-y divide-border">
+                        {module.lessons.map((lesson) => {
+                          const isCurrentLesson = lesson.lessonId === lessonId
+                          const isCompleted = userProgress.completedLessons.includes(lesson.lessonId)
+                          
+                          return (
+                            <button
+                              key={lesson.lessonId}
+                              onClick={() => router.push(`/education/${courseId}/${lesson.lessonId}`)}
+                              className={`w-full text-left px-3 py-2 text-xs transition-colors ${
+                                isCurrentLesson
+                                  ? "bg-primary/10 text-primary font-medium"
+                                  : "hover:bg-secondary/50 text-muted-foreground"
+                              }`}
+                            >
+                              <div className="flex items-center gap-2">
+                                {isCompleted ? (
+                                  <CheckCircle className="h-3 w-3 text-primary flex-shrink-0" />
+                                ) : (
+                                  <div className="h-3 w-3 rounded-full border border-muted-foreground flex-shrink-0" />
+                                )}
+                                <span className="truncate">{lesson.title}</span>
+                              </div>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-          <Separator />
+          {/* Main Lesson Content */}
+          <div className="lg:col-span-3">
+            <Card className="border-border bg-card">
+              <CardHeader className="space-y-4">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <CardTitle className="text-3xl text-foreground">{currentLesson.title}</CardTitle>
+                    <CardDescription className="mt-2">
+                      Module: {currentModule.title}
+                    </CardDescription>
+                  </div>
+                  {isLessonComplete && (
+                    <Badge className="bg-primary/20 text-primary">
+                      <CheckCircle className="mr-1 h-3 w-3" />
+                      Completed
+                    </Badge>
+                  )}
+                </div>
+              </CardHeader>
 
-          <CardContent className="pt-6">
-            {/* Lesson Content */}
-            <div className="prose prose-slate dark:prose-invert max-w-none">
-              <ReactMarkdown
-                components={{
-                  h1: ({ children }) => <h1 className="text-2xl font-bold text-foreground mt-6 mb-4">{children}</h1>,
-                  h2: ({ children }) => <h2 className="text-xl font-semibold text-foreground mt-5 mb-3">{children}</h2>,
-                  h3: ({ children }) => <h3 className="text-lg font-medium text-foreground mt-4 mb-2">{children}</h3>,
-                  p: ({ children }) => <p className="text-muted-foreground mb-4 leading-7">{children}</p>,
-                  ul: ({ children }) => <ul className="list-disc list-inside space-y-2 mb-4 text-muted-foreground">{children}</ul>,
-                  ol: ({ children }) => <ol className="list-decimal list-inside space-y-2 mb-4 text-muted-foreground">{children}</ol>,
-                  li: ({ children }) => <li className="ml-4">{children}</li>,
-                  code: ({ children, className }) => {
-                    const isInline = !className
-                    return isInline ? (
-                      <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-primary">{children}</code>
-                    ) : (
-                      <code className={`block bg-muted p-4 rounded-lg text-sm font-mono overflow-x-auto ${className}`}>{children}</code>
-                    )
-                  },
-                  pre: ({ children }) => <pre className="bg-muted p-4 rounded-lg overflow-x-auto mb-4">{children}</pre>,
-                  strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
-                  blockquote: ({ children }) => <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground my-4">{children}</blockquote>,
-                }}
-              >
-                {currentLesson.content}
-              </ReactMarkdown>
-            </div>
+              <Separator />
 
-            <Separator className="my-8" />
-
-            {/* Action Buttons */}
-            <div className="flex items-center justify-between gap-4">
-              <Button
-                variant="outline"
-                onClick={() => previousLesson && router.push(`/education/${courseId}/${previousLesson.lessonId}`)}
-                disabled={!previousLesson}
-              >
-                <ChevronLeft className="mr-2 h-4 w-4" />
-                Previous Lesson
-              </Button>
-
-              <div className="flex gap-3">
-                {!isLessonComplete && (
-                  <Button
-                    onClick={markLessonComplete}
-                    disabled={markingComplete}
-                    className="bg-primary hover:bg-primary/90"
+              <CardContent className="pt-6">
+                {/* Lesson Content */}
+                <div className="prose prose-slate dark:prose-invert max-w-none">
+                  <ReactMarkdown
+                    components={{
+                      h1: ({ children }) => <h1 className="text-2xl font-bold text-foreground mt-6 mb-4">{children}</h1>,
+                      h2: ({ children }) => <h2 className="text-xl font-semibold text-foreground mt-5 mb-3">{children}</h2>,
+                      h3: ({ children }) => <h3 className="text-lg font-medium text-foreground mt-4 mb-2">{children}</h3>,
+                      p: ({ children }) => <p className="text-muted-foreground mb-4 leading-7">{children}</p>,
+                      ul: ({ children }) => <ul className="list-disc list-inside space-y-2 mb-4 text-muted-foreground">{children}</ul>,
+                      ol: ({ children }) => <ol className="list-decimal list-inside space-y-2 mb-4 text-muted-foreground">{children}</ol>,
+                      li: ({ children }) => <li className="ml-4">{children}</li>,
+                      code: ({ children, className }) => {
+                        const isInline = !className
+                        return isInline ? (
+                          <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-primary">{children}</code>
+                        ) : (
+                          <code className={`block bg-muted p-4 rounded-lg text-sm font-mono overflow-x-auto ${className}`}>{children}</code>
+                        )
+                      },
+                      pre: ({ children }) => <pre className="bg-muted p-4 rounded-lg overflow-x-auto mb-4">{children}</pre>,
+                      strong: ({ children }) => <strong className="font-semibold text-foreground">{children}</strong>,
+                      blockquote: ({ children }) => <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground my-4">{children}</blockquote>,
+                    }}
                   >
-                    {markingComplete ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Marking...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="mr-2 h-4 w-4" />
-                        Mark Complete
-                      </>
+                    {currentLesson.content}
+                  </ReactMarkdown>
+                </div>
+
+                <Separator className="my-8" />
+
+                {/* Action Buttons */}
+                <div className="flex items-center justify-between gap-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => previousLesson && router.push(`/education/${courseId}/${previousLesson.lessonId}`)}
+                    disabled={!previousLesson}
+                  >
+                    <ChevronLeft className="mr-2 h-4 w-4" />
+                    Previous Lesson
+                  </Button>
+
+                  <div className="flex gap-3">
+                    {!isLessonComplete && (
+                      <Button
+                        onClick={markLessonComplete}
+                        disabled={markingComplete}
+                        className="bg-primary hover:bg-primary/90"
+                      >
+                        {markingComplete ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Marking...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Mark Complete
+                          </>
+                        )}
+                      </Button>
                     )}
-                  </Button>
-                )}
 
-                {nextLesson && (
-                  <Button
-                    onClick={() => router.push(`/education/${courseId}/${nextLesson.lessonId}`)}
-                    variant={isLessonComplete ? "default" : "outline"}
-                  >
-                    Next Lesson
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                    {nextLesson && (
+                      <Button
+                        onClick={() => router.push(`/education/${courseId}/${nextLesson.lessonId}`)}
+                        variant={isLessonComplete ? "default" : "outline"}
+                      >
+                        Next Lesson
+                        <ChevronRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   )
