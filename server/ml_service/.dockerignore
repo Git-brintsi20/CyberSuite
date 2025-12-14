@@ -1,0 +1,32 @@
+# Ignore sensitive files
+.env
+.env.*
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Models and data (will be generated)
+models/
+data/
+
+# Development files
+.git/
+.gitignore
+*.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
