@@ -40,9 +40,8 @@ export default function LoginPage() {
         setRequires2FA(true);
         setPendingUserId(response.data.userId);
       } else {
-        // Direct login (no 2FA)
-        await login(email, password);
-        router.push('/dashboard');
+        // Direct login (no 2FA) - redirect to trigger auth check
+        window.location.href = '/dashboard';
       }
     } catch (err: any) {
       setError(err.message || 'Failed to login. Please check your credentials.');
@@ -60,13 +59,11 @@ export default function LoginPage() {
       // Validate 2FA code
       await twoFactorAPI.validate(pendingUserId, twoFactorCode, isBackupCode);
       
-      // Complete login
-      await authAPI.loginWith2FA(pendingUserId);
+      // Complete login and update auth context
+      const response = await authAPI.loginWith2FA(pendingUserId);
       
-      // Update auth context
-      await login(email, password);
-      
-      router.push('/dashboard');
+      // Now that we're logged in, reload the auth context without calling login again
+      window.location.href = '/dashboard';
     } catch (err: any) {
       setError(err.response?.data?.message || 'Invalid verification code');
     } finally {
