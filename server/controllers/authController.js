@@ -154,11 +154,6 @@ const login = async (req, res) => {
     // Update last login time
     await user.updateLastLogin();
 
-    // Log login activity for ML training
-    logLoginActivity(req, user._id).catch(err => 
-      console.error('Failed to log login activity:', err)
-    );
-
     // Generate token
     const token = generateToken(user._id);
 
