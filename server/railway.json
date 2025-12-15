@@ -3,9 +3,9 @@
   "build": {
     "builder": "DOCKERFILE",
     "dockerfilePath": "./Dockerfile",
-    "watchPatterns": [
+    "watchPaths": [
       "**/*.js",
-      "package*.json",
+      "package.json",
       "Dockerfile"
     ]
   },
