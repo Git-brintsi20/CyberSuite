@@ -14,8 +14,7 @@ venv/
 env/
 ENV/
 
-# Models and data (will be generated)
-models/
+# Data directory (will be generated)
 data/
 
 # Development files
