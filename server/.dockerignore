@@ -1,0 +1,29 @@
+# Ignore sensitive files
+.env
+.env.*
+!.env.example
+
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Uploads (don't include in Docker image)
+uploads/
+*.enc
+
+# Development files
+.git/
+.gitignore
+README.md
+*.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
