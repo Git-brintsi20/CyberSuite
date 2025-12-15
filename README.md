@@ -347,25 +347,99 @@ ML service will run on `http://localhost:5001`
 
 ## 📸 Screenshots
 
-### Dashboard Overview
+### 🏠 Dashboard Overview
 ![Dashboard](./docs/screenshots/dashboard.png)
-*Real-time security metrics and threat monitoring*
+*Real-time security metrics, activity feed, and comprehensive threat monitoring*
 
-### Password Manager
-![Password Manager](./docs/screenshots/password-manager.png)
-*Secure credential storage with AES-256 encryption*
+---
 
-### Network Scanner
-![Network Scanner](./docs/screenshots/network-scanner.png)
-*Advanced vulnerability detection with 95% accuracy*
+### 🔐 Password Manager
+![Password Manager - Main View](./docs/screenshots/password-manager-main.png)
+*Secure credential vault with AES-256 encryption and advanced search*
 
-### File Vault
-![File Vault](./docs/screenshots/file-vault.png)
-*Encrypted file management system*
+![Password Manager - Add Credential](./docs/screenshots/password-manager-add.png)
+*Password generator with customizable settings and strength analysis*
 
-### Security Education
-![Education Hub](./docs/screenshots/education.png)
-*Interactive OWASP Top 10 training modules*
+![Password Manager - Decrypt View](./docs/screenshots/password-manager-decrypt.png)
+*Secure password decryption with click-to-reveal functionality*
+
+---
+
+### 🔒 Two-Factor Authentication
+![2FA Setup](./docs/screenshots/2fa-setup.png)
+*QR code setup for mobile authenticator apps*
+
+![2FA Verification](./docs/screenshots/2fa-verify.png)
+*TOTP verification during login with backup code support*
+
+![2FA Backup Codes](./docs/screenshots/2fa-backup-codes.png)
+*8 single-use backup codes for emergency access*
+
+---
+
+### 🕵️ Network Scanner
+![Network Scanner - Scan View](./docs/screenshots/network-scanner-main.png)
+*Real TCP port scanning with hostname resolution support*
+
+![Network Scanner - Results](./docs/screenshots/network-scanner-results.png)
+*Detailed security analysis with vulnerability warnings*
+
+---
+
+### 📦 File Vault
+![File Vault - Grid View](./docs/screenshots/file-vault-grid.png)
+*Drag & drop encrypted file upload with smart categorization*
+
+![File Vault - List View](./docs/screenshots/file-vault-list.png)
+*Advanced filtering and search across encrypted files*
+
+![File Upload](./docs/screenshots/file-upload.png)
+*Real-time upload progress with encryption status*
+
+---
+
+### 🎓 Security Education Hub
+![Education - Courses](./docs/screenshots/education-courses.png)
+*CyberSuite-specific security training courses*
+
+![Education - Lesson View](./docs/screenshots/education-lesson.png)
+*Interactive lessons with markdown rendering and progress tracking*
+
+![Education - Progress](./docs/screenshots/education-progress.png)
+*Comprehensive learning analytics and completion tracking*
+
+---
+
+### 🤖 ML-Powered Features
+![ML - Anomaly Detection](./docs/screenshots/ml-anomaly-detection.png)
+*Real-time login anomaly detection with risk scoring*
+
+![ML - Password Analysis](./docs/screenshots/ml-password-analysis.png)
+*Advanced password strength assessment with ML algorithms*
+
+![ML - Training Dashboard](./docs/screenshots/ml-training-dashboard.png)
+*Admin model training interface with performance metrics*
+
+---
+
+### 👤 User Profile & Settings
+![User Profile](./docs/screenshots/user-profile.png)
+*Account management and security settings*
+
+![Notifications](./docs/screenshots/notifications.png)
+*Real-time security alerts and activity notifications*
+
+---
+
+### 🔐 Authentication Pages
+![Login Page](./docs/screenshots/login-page.png)
+*Secure login with 2FA support*
+
+![Register Page](./docs/screenshots/register-page.png)
+*User registration with password strength validation*
+
+![Password Reset](./docs/screenshots/password-reset.png)
+*Secure password reset flow with email verification*
 
 ---
 
