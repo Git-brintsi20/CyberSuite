@@ -4,7 +4,6 @@ const { z } = require('zod');
 const User = require('../models/User');
 const TwoFactor = require('../models/TwoFactor');
 const { createWelcomeNotification } = require('../utils/notificationHelper');
-const { logLoginActivity } = require('../middleware/mlLogger');
 const sendEmail = require('../utils/sendEmail');
 
 // Zod validation schemas
@@ -270,11 +269,6 @@ const loginWith2FA = async (req, res) => {
 
     // Update last login time
     await user.updateLastLogin();
-
-    // Log login activity for ML training (after 2FA success)
-    logLoginActivity(req, user._id).catch(err => 
-      console.error('Failed to log login activity:', err)
-    );
 
     // Generate token
     const token = generateToken(user._id);
