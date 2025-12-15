@@ -19,8 +19,8 @@ RUN pip install --upgrade pip && \
 # Copy application code
 COPY . .
 
-# Create necessary directories
-RUN mkdir -p data models
+# Create necessary directories (only data, models already exists)
+RUN mkdir -p data
 
 # Expose port (Railway will override this with PORT env var)
 EXPOSE 5001
