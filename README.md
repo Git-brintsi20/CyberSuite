@@ -478,45 +478,6 @@ ML service will run on `http://localhost:5001`
 </div>
 
 ---
-*Interactive lessons with markdown rendering and progress tracking*
-
-![Education - Progress](./docs/screenshots/education-progress.png)
-*Comprehensive learning analytics and completion tracking*
-
----
-
-### 🤖 ML-Powered Features
-![ML - Anomaly Detection](./docs/screenshots/ml-anomaly-detection.png)
-*Real-time login anomaly detection with risk scoring*
-
-![ML - Password Analysis](./docs/screenshots/ml-password-analysis.png)
-*Advanced password strength assessment with ML algorithms*
-
-![ML - Training Dashboard](./docs/screenshots/ml-training-dashboard.png)
-*Admin model training interface with performance metrics*
-
----
-
-### 👤 User Profile & Settings
-![User Profile](./docs/screenshots/user-profile.png)
-*Account management and security settings*
-
-![Notifications](./docs/screenshots/notifications.png)
-*Real-time security alerts and activity notifications*
-
----
-
-### 🔐 Authentication Pages
-![Login Page](./docs/screenshots/login-page.png)
-*Secure login with 2FA support*
-
-![Register Page](./docs/screenshots/register-page.png)
-*User registration with password strength validation*
-
-![Password Reset](./docs/screenshots/password-reset.png)
-*Secure password reset flow with email verification*
-
----
 
 ## 🗂️ Project Structure
 
