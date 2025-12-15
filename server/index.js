@@ -50,6 +50,10 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+  // Disable X-Forwarded-For validation for Railway/proxy deployment
+  validate: {
+    xForwardedForHeader: false,
+  },
 });
 
 app.use('/api/', limiter);
