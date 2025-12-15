@@ -4,11 +4,30 @@ import numpy as np
 import os
 import sys
 
-# Add parent directory to path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Add current directory to path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, current_dir)
 
-from models.anomaly_detector import AnomalyDetector
-from models.password_analyzer import PasswordAnalyzer
+# Import models
+try:
+    from models.anomaly_detector import AnomalyDetector
+    from models.password_analyzer import PasswordAnalyzer
+except ModuleNotFoundError:
+    # Fallback for different directory structures
+    import importlib.util
+    
+    anomaly_path = os.path.join(current_dir, 'models', 'anomaly_detector.py')
+    password_path = os.path.join(current_dir, 'models', 'password_analyzer.py')
+    
+    spec1 = importlib.util.spec_from_file_location("anomaly_detector", anomaly_path)
+    anomaly_module = importlib.util.module_from_spec(spec1)
+    spec1.loader.exec_module(anomaly_module)
+    AnomalyDetector = anomaly_module.AnomalyDetector
+    
+    spec2 = importlib.util.spec_from_file_location("password_analyzer", password_path)
+    password_module = importlib.util.module_from_spec(spec2)
+    spec2.loader.exec_module(password_module)
+    PasswordAnalyzer = password_module.PasswordAnalyzer
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
