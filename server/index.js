@@ -43,6 +43,18 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 // 4. Cookie parser
 app.use(cookieParser());
 
+// Request logging middleware (production)
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    const start = Date.now();
+    res.on('finish', () => {
+      const duration = Date.now() - start;
+      console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} ${res.statusCode} ${duration}ms`);
+    });
+    next();
+  });
+}
+
 // 5. Rate limiting - Prevent brute force attacks
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -83,15 +95,35 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/scanner', scannerRoutes);
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    message: 'CyberSuite API is running',
-    timestamp: new Date().toISOString(),
-    env: process.env.NODE_ENV,
-    frontendUrl: process.env.FRONTEND_URL,
-    cookiesReceived: Object.keys(req.cookies).length
-  });
+app.get('/api/health', async (req, res) => {
+  try {
+    // Check database connection
+    const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+    const dbPing = await mongoose.connection.db.admin().ping();
+    
+    res.json({ 
+      status: 'ok', 
+      message: 'CyberSuite API is running',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      env: process.env.NODE_ENV,
+      frontendUrl: process.env.FRONTEND_URL,
+      database: {
+        status: dbStatus,
+        ping: dbPing.ok === 1 ? 'ok' : 'error'
+      },
+      memory: {
+        used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + 'MB',
+        total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024) + 'MB'
+      }
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: 'error',
+      message: 'Service unhealthy',
+      error: error.message
+    });
+  }
 });
 
 // 404 Handler
@@ -115,10 +147,49 @@ app.use((err, req, res, next) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📡 Environment: ${process.env.NODE_ENV}`);
   console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL}`);
+  console.log(`⏰ Started at: ${new Date().toISOString()}`);
+});
+
+// Graceful shutdown handling
+const gracefulShutdown = async (signal) => {
+  console.log(`\n${signal} received. Starting graceful shutdown...`);
+  
+  server.close(async () => {
+    console.log('✅ HTTP server closed');
+    
+    try {
+      await mongoose.connection.close();
+      console.log('✅ MongoDB connection closed');
+      process.exit(0);
+    } catch (error) {
+      console.error('❌ Error during shutdown:', error);
+      process.exit(1);
+    }
+  });
+  
+  // Force shutdown after 10 seconds
+  setTimeout(() => {
+    console.error('⚠️  Forcing shutdown after timeout');
+    process.exit(1);
+  }, 10000);
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+  gracefulShutdown('UNCAUGHT_EXCEPTION');
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  gracefulShutdown('UNHANDLED_REJECTION');
 });
 
 module.exports = app;
