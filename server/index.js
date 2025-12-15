@@ -83,7 +83,10 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     message: 'CyberSuite API is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV,
+    frontendUrl: process.env.FRONTEND_URL,
+    cookiesReceived: Object.keys(req.cookies).length
   });
 });
 
