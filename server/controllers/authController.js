@@ -29,8 +29,8 @@ const generateToken = (userId) => {
 const setTokenCookie = (res, token) => {
   res.cookie('jwt', token, {
     httpOnly: true, // Prevents XSS attacks
-    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Allow cross-origin in production
+    secure: true, // Always true for Vercel/Railway deployment
+    sameSite: 'none', // Always 'none' for Cross-Origin requests
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   });
 };
@@ -195,8 +195,8 @@ const login = async (req, res) => {
 const logout = (req, res) => {
   res.cookie('jwt', '', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    secure: true, // Always true for cross-origin
+    sameSite: 'none', // Always 'none' for cross-origin
     expires: new Date(0)
   });
 
