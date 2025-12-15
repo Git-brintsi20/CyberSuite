@@ -9,6 +9,9 @@ require('dotenv').config();
 // Initialize Express app
 const app = express();
 
+// Trust proxy - Required for Railway/Heroku deployment
+app.set('trust proxy', 1);
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅ MongoDB connected successfully'))
