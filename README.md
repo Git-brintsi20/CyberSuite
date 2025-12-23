@@ -34,6 +34,140 @@ The **Cybersecurity Applications Suite** is an enterprise-grade, full-stack secu
 
 ---
 
+## 📸 Screenshots
+
+### 🏠 Dashboard Overview
+
+<div align="center">
+
+#### Light Mode
+![Dashboard Light Mode](./docs/images/dashboard-light.png)
+*Clean, modern dashboard with real-time security metrics and activity monitoring*
+
+#### Dark Mode
+![Dashboard Dark Mode](./docs/images/dashboard-dark.png)
+*Eye-friendly dark mode with comprehensive threat monitoring*
+
+</div>
+
+---
+
+### 🔐 Password Manager
+
+<div align="center">
+
+#### Password Manager Dashboard
+![Password Manager Light](./docs/images/password-manager-light.png)
+*Secure credential vault with AES-256 encryption in light mode*
+
+![Password Manager Dark](./docs/images/password-manager-dark.png)
+*Password manager with advanced search and filtering in dark mode*
+
+#### Add New Credential
+![Add Credential Light](./docs/images/add-credential-modal-light.png)
+*Intuitive credential creation modal in light mode*
+
+![Add Credential Dark](./docs/images/add-credential-modal-dark.png)
+*Add credential interface in dark mode*
+
+#### ML-Powered Password Generator
+![Password Generator with ML Analysis](./docs/images/password-generator-ml-dark.png)
+*Real-time password strength analysis with ML-based security recommendations*
+
+</div>
+
+---
+
+### 🔒 Two-Factor Authentication (2FA)
+
+<div align="center">
+
+![2FA Settings Option](./docs/images/2fa-settings-option.png)
+*Enable 2FA from your profile settings page*
+
+![2FA Scanner View](./docs/images/2fa-scanner-view.png)
+*QR code setup for Google Authenticator, Authy, or Microsoft Authenticator*
+
+</div>
+
+---
+
+---
+
+### 🕵️ Network Scanner
+
+<div align="center">
+
+#### Network Scanner Dashboard
+![Network Scanner Dark](./docs/images/network-scanner-dark.png)
+*Real TCP port scanning dashboard with security analysis*
+
+#### Console Output
+![Network Scanner Console](./docs/images/network-scanner-console-dark.png)
+*Live scanning output showing detected services and vulnerabilities*
+
+</div>
+
+---
+
+### 📦 File Vault
+
+<div align="center">
+
+![File Vault Light](./docs/images/file-vault-light.png)
+*Encrypted file storage with AES-256-GCM encryption and drag-and-drop upload*
+
+</div>
+
+---
+
+### 🎓 Security Education Hub
+
+<div align="center">
+
+#### Education Dashboard
+![Education Dashboard Light](./docs/images/education-dashboard-light.png)
+*CyberSuite-specific security training courses in light mode*
+
+![Education Dashboard Dark](./docs/images/education-dashboard-dark.png)
+*Education hub with progress tracking in dark mode*
+
+#### Course Content
+![Courses List](./docs/images/courses-list-dark.png)
+*Browse available security courses*
+
+![Course Lesson](./docs/images/course-lesson-light.png)
+*Interactive lesson viewer with markdown rendering and progress tracking*
+
+</div>
+
+---
+
+### ⚙️ Profile & Settings
+
+<div align="center">
+
+![Profile Settings Light](./docs/images/profile-settings-light.png)
+*User profile and security settings in light mode*
+
+![Profile Settings Dark](./docs/images/profile-settings-dark.png)
+*Profile management with 2FA controls in dark mode*
+
+</div>
+
+---
+
+### 🗄️ Backend & Database
+
+<div align="center">
+
+![MongoDB Database](./docs/images/mongodb-database.png)
+*MongoDB database structure showing encrypted data storage*
+
+</div>
+
+---
+
 ## ✨ Key Features
 
 ### 🔐 **Password Manager**
@@ -342,140 +476,6 @@ ML service will run on `http://localhost:5001`
 1. Navigate to `http://localhost:3000`
 2. You should see the login page
 3. Check backend health: `http://localhost:5000/api/health`
-
----
-
-## 📸 Screenshots
-
-### 🏠 Dashboard Overview
-
-<div align="center">
-
-#### Light Mode
-![Dashboard Light Mode](./docs/images/dashboard-light.png)
-*Clean, modern dashboard with real-time security metrics and activity monitoring*
-
-#### Dark Mode
-![Dashboard Dark Mode](./docs/images/dashboard-dark.png)
-*Eye-friendly dark mode with comprehensive threat monitoring*
-
-</div>
-
----
-
-### 🔐 Password Manager
-
-<div align="center">
-
-#### Password Manager Dashboard
-![Password Manager Light](./docs/images/password-manager-light.png)
-*Secure credential vault with AES-256 encryption in light mode*
-
-![Password Manager Dark](./docs/images/password-manager-dark.png)
-*Password manager with advanced search and filtering in dark mode*
-
-#### Add New Credential
-![Add Credential Light](./docs/images/add-credential-modal-light.png)
-*Intuitive credential creation modal in light mode*
-
-![Add Credential Dark](./docs/images/add-credential-modal-dark.png)
-*Add credential interface in dark mode*
-
-#### ML-Powered Password Generator
-![Password Generator with ML Analysis](./docs/images/password-generator-ml-dark.png)
-*Real-time password strength analysis with ML-based security recommendations*
-
-</div>
-
----
-
-### 🔒 Two-Factor Authentication (2FA)
-
-<div align="center">
-
-![2FA Settings Option](./docs/images/2fa-settings-option.png)
-*Enable 2FA from your profile settings page*
-
-![2FA Scanner View](./docs/images/2fa-scanner-view.png)
-*QR code setup for Google Authenticator, Authy, or Microsoft Authenticator*
-
-</div>
-
----
-
----
-
-### 🕵️ Network Scanner
-
-<div align="center">
-
-#### Network Scanner Dashboard
-![Network Scanner Dark](./docs/images/network-scanner-dark.png)
-*Real TCP port scanning dashboard with security analysis*
-
-#### Console Output
-![Network Scanner Console](./docs/images/network-scanner-console-dark.png)
-*Live scanning output showing detected services and vulnerabilities*
-
-</div>
-
----
-
-### 📦 File Vault
-
-<div align="center">
-
-![File Vault Light](./docs/images/file-vault-light.png)
-*Encrypted file storage with AES-256-GCM encryption and drag-and-drop upload*
-
-</div>
-
----
-
-### 🎓 Security Education Hub
-
-<div align="center">
-
-#### Education Dashboard
-![Education Dashboard Light](./docs/images/education-dashboard-light.png)
-*CyberSuite-specific security training courses in light mode*
-
-![Education Dashboard Dark](./docs/images/education-dashboard-dark.png)
-*Education hub with progress tracking in dark mode*
-
-#### Course Content
-![Courses List](./docs/images/courses-list-dark.png)
-*Browse available security courses*
-
-![Course Lesson](./docs/images/course-lesson-light.png)
-*Interactive lesson viewer with markdown rendering and progress tracking*
-
-</div>
-
----
-
-### ⚙️ Profile & Settings
-
-<div align="center">
-
-![Profile Settings Light](./docs/images/profile-settings-light.png)
-*User profile and security settings in light mode*
-
-![Profile Settings Dark](./docs/images/profile-settings-dark.png)
-*Profile management with 2FA controls in dark mode*
-
-</div>
-
----
-
-### 🗄️ Backend & Database
-
-<div align="center">
-
-![MongoDB Database](./docs/images/mongodb-database.png)
-*MongoDB database structure showing encrypted data storage*
-
-</div>
 
 ---
 
