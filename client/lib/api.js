@@ -33,10 +33,16 @@ api.interceptors.response.use(
       const { status, data } = error.response;
 
       if (status === 401) {
-        // Unauthorized - redirect to login only if not already on login/register pages
+        // Unauthorized - keep public pages accessible without forcing login redirect
         if (typeof window !== 'undefined') {
           const currentPath = window.location.pathname;
-          if (currentPath !== '/login' && currentPath !== '/register') {
+
+          const publicPaths = ['/', '/login', '/register', '/forgot-password'];
+          const isPublicPath =
+            publicPaths.includes(currentPath) ||
+            currentPath.startsWith('/reset-password/');
+
+          if (!isPublicPath) {
             window.location.href = '/login';
           }
         }

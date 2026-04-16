@@ -1,805 +1,542 @@
 <div align="center">
 
-# 🛡️ Cybersecurity Applications Suite
+# CyberSuite
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
-[![Security Grade](https://img.shields.io/badge/security-A+-success.svg)]()
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)]()
-[![MongoDB](https://img.shields.io/badge/MongoDB-6.0+-47A248?logo=mongodb&logoColor=white)]()
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js&logoColor=white)]()
+### Your Complete Cybersecurity Suite for Passwords, Files, Scanning, and Security Training
 
-### Enterprise-Grade Cybersecurity Platform for Password Management, Threat Detection & Security Education
+[![License: MIT](https://img.shields.io/badge/License-MIT-0f766e.svg)](LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-22c55e.svg)]()
+[![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)]()
+[![MongoDB](https://img.shields.io/badge/MongoDB-6%2B-10b981.svg)]()
+[![Security Grade](https://img.shields.io/badge/Security-A%2B-14b8a6.svg)]()
 
-*A comprehensive security suite delivering military-grade encryption, real-time threat detection, and interactive vulnerability training*
+Protecting digital life with AES-256 encryption, password management, network scanning, file vaulting, and hands-on security education.
 
-[Features](#-key-features) • [Security](#-security-architecture) • [Installation](#-installation-guide) • [Screenshots](#-screenshots) • [License](#-license)
+</div>
+
+<div align="center">
+
+![CyberSuite Homepage](./docs/images/HomepAge.png)
+
+<a href="https://youtu.be/_SlmBWYKhsk" target="_blank" rel="noopener noreferrer">
+  <img src="https://img.shields.io/badge/Watch%20Demo%20Video-00c896?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch the CyberSuite demo video" />
+</a>
 
 </div>
 
 ---
 
-## 📊 Executive Summary
+## Index
 
-The **Cybersecurity Applications Suite** is an enterprise-grade, full-stack security platform designed to address critical organizational security needs through three core modules: secure credential management, encrypted file storage, and security awareness training. Built on the MERN stack with industry-standard encryption protocols, this suite provides a unified solution for managing sensitive data, securing files, and educating teams on contemporary cybersecurity threats.
-
-### 🎯 Key Performance Indicators
-
-| Metric | Achievement | Module |
-|--------|-------------|--------|
-| **Password Strength Analysis** | **ML-Powered** | Password Manager |
-| **Network Port Scanning** | **Real TCP Scanning** | Network Scanner |
-| **Encryption Operations** | **10,000+/month** | File Vault |
-| **Security Vulnerabilities Covered** | **OWASP Top 10** | Education Module |
-
----
-
-## ✨ Key Features
-
-### 🔐 **Password Manager**
-*Military-grade credential storage with zero-knowledge architecture*
-
-- **AES-256-GCM Encryption**: Industry-leading symmetric encryption for password storage
-- **Secure Credential Vault**: Centralized password repository with role-based access control
-- **Password Generator**: Customizable password generation with strength indicator (8-32 characters)
-- **Advanced Search & Filter**: Real-time search, category filtering, and multi-sort options
-- **Password Strength Analyzer**: Real-time entropy calculation and strength recommendations
-- **Audit Logging**: Complete activity tracking for compliance and security monitoring
-- **Multi-device Sync**: Encrypted credential synchronization across devices
-
-### 🔒 **Two-Factor Authentication (2FA)**
-*TOTP-based multi-factor authentication system*
-
-- **TOTP Implementation**: Time-based One-Time Password using speakeasy
-- **QR Code Setup**: Easy mobile authenticator app integration
-- **Backup Codes**: 8 single-use recovery codes for emergency access
-- **Login Protection**: Mandatory 2FA verification for enabled accounts
-- **Backup Code Support**: Alternative authentication method if device unavailable
-- **Status Dashboard**: Real-time 2FA statistics and management
-
-### 🕵️ **Network Scanner**
-*Real network security analysis for authorized networks*
-
-- **TCP Port Scanning**: Real-time scanning using Node.js socket connections
-- **20 Common Ports**: Scans essential services (SSH, HTTP, HTTPS, FTP, MySQL, RDP, etc.)
-- **Hostname Resolution**: Supports both IP addresses and domain names via DNS
-- **Security Analysis**: Detects insecure services (Telnet, FTP) and provides warnings
-- **Batch Scanning**: Efficient rate-limited scanning (10 ports at a time)
-- **Authorized Use Only**: For scanning your own networks (home/office with permission)
-- **Custom Scanning Profiles**: Configurable scan depth and frequency
-- **Alert System**: Immediate notification of critical security threats
-- **Compliance Reporting**: Automated report generation for security audits
-
-### 📦 **Encrypted File Vault**
-*High-performance secure file storage system with end-to-end encryption*
-
-- **AES-256-GCM Encryption**: Client-side encryption before upload with unique IV per file
-- **Processing Capacity**: Handles 10,000+ secure file operations monthly
-- **Drag & Drop Upload**: Intuitive file upload with real-time progress tracking
-- **Smart Categorization**: Automatic file categorization (documents, images, videos, audio)
-- **Advanced Search**: Full-text search across filenames, descriptions, and tags
-- **Grid/List Views**: Flexible file viewing with favorites and metadata
-- **Access Control**: User-based file isolation with download tracking
-- **Secure Download**: Automatic file decryption on download
-
-### 🎓 **Security Education Hub**
-*Tailored cybersecurity training to help users master CyberSuite and stay safe online*
-
-- **CyberSuite-Specific Courses**: 3 comprehensive courses designed specifically for this application:
-  - **CyberSuite Security Essentials** (Beginner, 2.5 hours) - Master password security, file encryption, and threat protection
-  - **File Vault & Encryption Mastery** (Beginner, 2 hours) - Learn AES-256 encryption and secure file management
-  - **Network Security & Scanner Guide** (Intermediate, 2 hours) - Use the network scanner safely and secure your home network
-  
-- **Interactive Lessons**: Step-by-step courses with markdown content rendering and real-world examples
-- **Practical Focus**: Each lesson teaches users how to use CyberSuite tools effectively
-- **Progress Tracking**: Comprehensive analytics on learning completion with lesson-by-lesson tracking
-- **Lesson Navigation**: Previous/Next navigation with auto-advance on completion
-- **Real-World Scenarios**: Courses include actual security threats and how CyberSuite protects against them
-- **Best Practices**: Security hygiene, password strategies, encryption fundamentals, and network protection
-- **Legal & Ethical Guidance**: Proper use of security tools with legal boundaries clearly explained
-
-### 🤖 **ML-Powered Security Intelligence**
-*Machine learning-based anomaly detection and threat analysis*
-
-- **Login Anomaly Detection**: Isolation Forest algorithm identifies suspicious login patterns
-  - 7-feature analysis: hour, day, weekend, IP, user agent, time since last login, frequency
-  - Real-time scoring (0-100) with detailed risk factors
-  - Requires 50-100 login records for training
-  - Automatic model retraining with new data
-  
-- **ML-Based Password Analysis**: Advanced password strength assessment
-  - Entropy calculation and pattern detection
-  - Sequential character identification (abc, 123)
-  - Common password checking (top 100 known weak passwords)
-  - Estimated crack time calculation
-  - Comprehensive vulnerability reporting with suggestions
-  
-- **Python ML Microservice**: Dedicated Flask API on port 5001
-  - Isolation Forest for anomaly detection
-  - scikit-learn, pandas, numpy for ML operations
-  - Model persistence with joblib
-  - Independent scaling and deployment
-  
-- **ML Training Dashboard**: Admin-only model training interface
-  - View training data statistics
-  - Manual model retraining trigger
-  - Anomaly detection performance metrics
-  - Historical data visualization
+- [Screenshots](#screenshots)
+- [Executive Snapshot](#executive-snapshot)
+- [Why CyberSuite Stands Out](#why-cybersuite-stands-out)
+- [Core Modules](#core-modules)
+- [Tech Stack](#tech-stack)
+- [Security Architecture](#security-architecture)
+- [Installation](#installation)
+- [Project Structure](#project-structure)
+- [API Endpoints](#api-endpoints)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [License](#license)
+- [Author](#author)
 
 ---
 
-## 🔒 Security Architecture
+## Screenshots
 
-The Cybersecurity Applications Suite implements defense-in-depth security principles with multiple layers of protection:
+### Dashboard
 
-### 🛡️ **Authentication & Authorization**
+<div align="center">
 
-#### **JWT-Based Authentication**
-- **Token Lifecycle**: 7-day expiration with automatic refresh
-- **HttpOnly Cookies**: Prevents XSS-based token theft
-- **SameSite Policy**: CSRF protection with strict same-site enforcement
-- **Secure Flag**: HTTPS-only transmission in production environments
+| Light Mode | Dark Mode |
+| --- | --- |
+| ![Dashboard Light](./docs/images/dashboard-light.png) | ![Dashboard Dark](./docs/images/dashboard-dark.png) |
 
-#### **Password Security**
-- **bcryptjs Hashing**: Salted password hashing with configurable work factor (10 rounds)
-- **Salt Generation**: Unique cryptographic salt per user credential
-- **Rainbow Table Resistance**: Pre-computation attack mitigation
-- **Password Policy Enforcement**: Minimum complexity requirements
+</div>
 
-### � **Email & Password Reset**
+### Password Manager
 
-#### **Secure Password Reset Flow**
-- **Email Integration**: Real SMTP email delivery via Gmail or custom SMTP server
-- **Crypto-Secure Tokens**: 32-byte random tokens with SHA-256 hashing
-- **Time-Limited Tokens**: 10-minute expiration for security
-- **Single-Use Tokens**: Tokens invalidated after successful password reset
-- **Professional Email Templates**: HTML-formatted emails with purple branding
-- **Frontend Pages**: Dedicated forgot-password and reset-password/[token] pages
-- **SMTP Configuration**: Supports Gmail App Passwords and custom SMTP servers
+<div align="center">
 
-### �🔐 **Data Encryption**
+| Password Vault | Add Credential |
+| --- | --- |
+| ![Password Manager Light](./docs/images/password-manager-light.png) | ![Add Credential Light](./docs/images/add-credential-modal-light.png) |
 
-#### **AES-256-GCM Implementation**
-```
-Algorithm: AES-256-GCM (Galois/Counter Mode)
-Key Size: 256 bits
-IV: 16 bytes (randomly generated per encryption)
-Authentication Tag: 128 bits
-```
+| Dark Vault | ML Password Analysis |
+| --- | --- |
+| ![Password Manager Dark](./docs/images/password-manager-dark.png) | ![Password Generator with ML Analysis](./docs/images/password-generator-ml-dark.png) |
 
-- **Confidentiality**: AES-256 symmetric encryption
-- **Integrity**: Galois Message Authentication Code (GMAC)
-- **Non-repudiation**: Authenticated encryption prevents tampering
-- **Key Management**: Environment-based key storage with rotation support
+</div>
 
-### 🚨 **Attack Surface Mitigation**
+### Security Tools
 
-| Threat Vector | Mitigation Strategy | Implementation |
-|---------------|---------------------|----------------|
-| **XSS (Cross-Site Scripting)** | HttpOnly cookies, CSP headers | Helmet.js middleware |
-| **CSRF (Cross-Site Request Forgery)** | SameSite cookies, token validation | Cookie configuration |
-| **SQL/NoSQL Injection** | Mongoose ODM, input sanitization | Zod validation schemas |
-| **Brute Force** | Rate limiting, account lockout | Express-rate-limit (100 req/15min) |
-| **Man-in-the-Middle** | TLS/SSL enforcement | HTTPS-only in production |
-| **DOS/DDOS** | Request size limits, rate limiting | Body parser limits (10kb) |
+<div align="center">
 
-### 🔍 **Security Headers**
-Implemented via Helmet.js:
-- `Content-Security-Policy`
-- `X-Frame-Options: DENY`
-- `X-Content-Type-Options: nosniff`
-- `Strict-Transport-Security`
-- `X-XSS-Protection`
+| Two-Factor Authentication | Network Scanner |
+| --- | --- |
+| ![2FA Settings Option](./docs/images/2fa-settings-option.png) | ![Network Scanner Dark](./docs/images/network-scanner-dark.png) |
+
+| File Vault | Profile & Settings |
+| --- | --- |
+| ![File Vault Light](./docs/images/file-vault-light.png) | ![Profile Settings Light](./docs/images/profile-settings-light.png) |
+
+</div>
+
+### Education and Data
+
+<div align="center">
+
+| Learning Hub | Database View |
+| --- | --- |
+| ![Education Dashboard Light](./docs/images/education-dashboard-light.png) | ![MongoDB Database](./docs/images/mongodb-database.png) |
+
+</div>
+
+---
+
+## 🚀 Executive Snapshot
+
+CyberSuite is a full-stack cybersecurity platform built to showcase practical security engineering in one product. It combines encrypted credential storage, protected file handling, live network scanning, two-factor authentication, ML-assisted threat analysis, and guided security education into a single polished experience.
+
+This README is designed to make the value obvious quickly for managers, recruiters, and technical reviewers: the product looks professional, the security story is clear, and the implementation spans frontend, backend, and ML services.
+
+<div style="border:1px solid #1f2937;border-radius:16px;padding:16px 18px;background:linear-gradient(135deg, rgba(16,185,129,0.08), rgba(34,197,94,0.03));margin:18px 0;">
+  <strong>📌 Snapshot:</strong> One platform, multiple security layers, and a polished product story that signals real engineering depth fast.
+</div>
+
+### Highlights at a glance
+
+<table>
+  <tr>
+    <td width="33%"><strong>Security First</strong><br/>AES-256-GCM, 2FA, HttpOnly cookies, and validation-driven flows.</td>
+    <td width="33%"><strong>Real Features</strong><br/>Password vault, network scanner, file vault, and ML support.</td>
+    <td width="33%"><strong>Presentation Ready</strong><br/>A polished product story designed to win fast attention.</td>
+  </tr>
+</table>
+
+| Capability | Value |
+| --- | --- |
+| Password Security | AES-256-GCM encrypted credential vault with search, filtering, and strength analysis |
+| Network Scanning | TCP-based scanning for common ports and security exposure checks |
+| File Protection | Encrypted upload and secure download flow for sensitive files |
+| Security Training | Course-based education module with progress tracking |
+| ML Intelligence | Login anomaly detection and password analysis support |
+
+---
+
+## ✨ Why CyberSuite Stands Out
+
+CyberSuite is more than a demo app. It presents a coherent security platform with a strong visual identity and a practical feature set that maps directly to real-world concerns.
+
+<div align="center">
+
+| What a recruiter sees | Why it matters |
+| --- | --- |
+| Clear product vision | It reads like a finished platform, not a classroom exercise |
+| Real engineering depth | Security, backend, frontend, and ML all show up in one system |
+| Strong product polish | The first screen communicates confidence and momentum |
+
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:18px 0;">
+  <div style="border:1px solid #1f2937;border-radius:14px;padding:14px 16px;background:#0b1220;">
+    <div style="font-weight:700;margin-bottom:6px;">🎯 Clear product vision</div>
+    <div>It reads like a finished platform, not a classroom exercise.</div>
+  </div>
+  <div style="border:1px solid #1f2937;border-radius:14px;padding:14px 16px;background:#0b1220;">
+    <div style="font-weight:700;margin-bottom:6px;">🧠 Real engineering depth</div>
+    <div>Security, backend, frontend, and ML all show up in one system.</div>
+  </div>
+  <div style="border:1px solid #1f2937;border-radius:14px;padding:14px 16px;background:#0b1220;">
+    <div style="font-weight:700;margin-bottom:6px;">🪄 Strong product polish</div>
+    <div>The first screen communicates confidence and momentum.</div>
+  </div>
+</div>
+
+- Zero-knowledge style password storage with authenticated encryption
+- Real network scanning instead of placeholder UI
+- Secure file vault behavior with client-side protection flow
+- 2FA support and security settings surfaced in the user experience
+- Educational content to demonstrate product thinking beyond raw tooling
+- A polished landing page that communicates value fast
+
+---
+
+## 🧩 Core Modules
+
+<table>
+  <tr>
+    <td width="50%"><strong>🔐 Password Manager</strong><br/>Encrypted credential storage with generation, analysis, and retrieval.</td>
+    <td width="50%"><strong>🕵️ Network Scanner</strong><br/>Authorized TCP scanning with exposure hints and readable results.</td>
+  </tr>
+  <tr>
+    <td><strong>📦 File Vault</strong><br/>Encrypted upload and download handling for sensitive documents.</td>
+    <td><strong>🎓 Security Education</strong><br/>Course-based learning with progress tracking and practical guidance.</td>
+  </tr>
+  <tr>
+    <td><strong>🛡️ Two-Factor Authentication</strong><br/>TOTP verification, QR setup, and backup recovery codes.</td>
+    <td><strong>🤖 ML Security Intelligence</strong><br/>Anomaly detection and password analysis through a dedicated service.</td>
+  </tr>
+</table>
+
+### Password Manager
+
+- AES-256-GCM credential encryption
+- Password generation and strength analysis
+- Search, filtering, and category organization
+- Secure storage and retrieval flows
+
+### Network Scanner
+
+- TCP port scanning for common service ports
+- Hostname and IP-based scanning support
+- Vulnerability and exposure hints for insecure services
+- Console-style and dashboard-style scanning views
+
+### File Vault
+
+- Encrypted file upload and download flow
+- Metadata tracking and access control
+- Secure handling for sensitive documents
+
+### Security Education
+
+- Course-based learning experience
+- Progress tracking across lessons
+- Content aimed at security awareness and best practices
+
+### Two-Factor Authentication
+
+- TOTP-based verification flow
+- QR code setup for authenticator apps
+- Backup code support for recovery
+
+### ML Security Intelligence
+
+- Login anomaly detection support
+- Password analysis enhancements
+- Separate Python microservice for ML workloads
 
 ---
 
 ## 🛠️ Tech Stack
 
-### **Frontend Architecture**
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Next.js | 15+ | React framework with App Router |
-| React | 19+ | UI component library |
-| TypeScript | Latest | Type-safe development |
-| Tailwind CSS | 3+ | Utility-first styling |
-| shadcn/ui | Latest | Accessible component system |
-| Axios | Latest | HTTP client with interceptors |
+<table>
+  <tr>
+    <td width="33%"><strong>🧱 Frontend</strong><br/>Next.js 15, React 19, TypeScript, Tailwind CSS, shadcn/ui</td>
+    <td width="33%"><strong>⚙️ Backend</strong><br/>Node.js, Express, MongoDB, Mongoose, JWT, bcryptjs, Multer</td>
+    <td width="33%"><strong>🧪 ML Service</strong><br/>Python 3.x, Flask, scikit-learn, pandas, numpy, joblib</td>
+  </tr>
+</table>
 
-### **Backend Architecture**
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Node.js | 18+ | JavaScript runtime |
-| Express.js | 5+ | REST API framework |
-| MongoDB | 6.0+ | NoSQL database |
-| Mongoose | 8+ | ODM for MongoDB |
-| JWT | 9+ | Token-based authentication |
-| bcryptjs | 3+ | Password hashing |
-| Multer | 2+ | File upload middleware |
-| Speakeasy | 2+ | TOTP 2FA implementation |
-| QRCode | 1+ | QR code generation for 2FA |
-| Nodemailer | 6+ | Email sending (SMTP) for password reset |
-| **Python** | **3.x** | **ML microservice runtime** |
-| **Flask** | **3.0.0** | **ML API framework** |
-| **scikit-learn** | **1.3.2** | **Machine learning library** |
-| **pandas** | **2.1.4** | **Data manipulation** |
-| **numpy** | **1.26.2** | **Numerical computing** |
-| **joblib** | **1.3.2** | **Model persistence** |
+### Frontend
 
-### **Security Stack**
-- **Encryption**: AES-256-GCM (Node.js Crypto)
-- **Hashing**: bcryptjs (Salted, 10 rounds)
-- **2FA**: Speakeasy (TOTP with 30s window)
-- **Validation**: Zod (Type-safe schema validation)
-- **Rate Limiting**: Express-rate-limit (100 req/15min)
-- **Security Headers**: Helmet.js
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+
+### Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT
+- bcryptjs
+- Multer
+- Speakeasy
+- Nodemailer
+
+### ML Service
+
+- Python 3.x
+- Flask
+- scikit-learn
+- pandas
+- numpy
+- joblib
 
 ---
 
-## 📥 Installation Guide
+## 🔒 Security Architecture
+
+CyberSuite is built around defense-in-depth.
+
+<div style="border-left:4px solid #10b981;padding:14px 16px;margin:16px 0;background:rgba(16,185,129,0.05);border-radius:12px;">
+  <strong>🛡️ Defense in depth:</strong> the platform treats identity, data, and operational safety as separate concerns, not one blended control.
+</div>
+
+<table>
+  <tr>
+    <td width="50%"><strong>🪪 Identity & Session</strong><br/>JWT, HttpOnly cookies, SameSite enforcement, and 2FA.</td>
+    <td width="50%"><strong>🧷 Data Protection</strong><br/>AES-256-GCM, secure file handling, and encrypted credential flows.</td>
+  </tr>
+  <tr>
+    <td><strong>🧱 App Hardening</strong><br/>Helmet, rate limiting, validation, and size limits.</td>
+    <td><strong>⚡ Operational Safety</strong><br/>Dedicated ML service and controlled password reset flows.</td>
+  </tr>
+</table>
+
+- Authenticated encryption for sensitive credential and file workflows
+- HttpOnly cookie-based session handling
+- CSRF-aware cookie configuration
+- Input validation on user-facing endpoints
+- Rate limiting and security headers
+- Password reset flow with time-limited tokens
+- Separate ML service for isolated processing
+
+---
+
+## 🧰 Installation
+
+<div align="center">
+
+| Step 1 | Step 2 | Step 3 |
+| --- | --- | --- |
+| Clone | Configure | Run |
+
+</div>
+
+<div style="border:1px dashed #334155;border-radius:14px;padding:14px 16px;margin:16px 0;background:rgba(15,23,42,0.55);">
+  <strong>🧭 Setup flow:</strong> clone the repo, wire the environment variables, then start the backend, frontend, and optional ML service.
+</div>
 
 ### Prerequisites
-- Node.js >= 18.0.0
-- **Python >= 3.8** (for ML service)
-- MongoDB >= 6.0 (local or Atlas)
-- Git
-- npm or pnpm
-- **pip** (Python package manager)
 
-### Step 1: Clone Repository
+- Node.js 18 or later
+- MongoDB 6 or later
+- Python 3.8 or later for ML features
+- npm or pnpm
+
+### Clone the repository
+
 ```bash
 git clone https://github.com/Git-brintsi20/CyberSuite.git
 cd CyberSuite/cybersecurity-suite
 ```
 
-### Step 2: Environment Configuration
+### Backend setup
 
-#### **Server Environment Variables**
-Create `server/.env`:
-```bash
-# Database Configuration
-MONGO_URI=your_mongodb_connection_string
-
-# JWT Configuration
-JWT_SECRET=your_jwt_secret_key
-
-# Encryption Configuration
-ENCRYPTION_KEY=your_64_character_hex_key
-
-# Server Configuration
-PORT=5000
-NODE_ENV=development
-FRONTEND_URL=http://localhost:3000
-
-# Email Configuration (for password reset)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASSWORD=your_app_password_here
-EMAIL_FROM=CyberSuite <your_email@gmail.com>
-
-# ML Service Configuration (optional)
-ML_SERVICE_URL=http://localhost:5001
-```
-
-#### **Client Environment Variables**
-Create `client/.env.local`:
-```bash
-NEXT_PUBLIC_API_URL=http://localhost:5000
-```
-
-> 📘 **See [ENV_SETUP_GUIDE.md](ENV_SETUP_GUIDE.md) for detailed instructions on generating secure keys and obtaining MongoDB credentials.**
-
-### Step 3: Install Dependencies
-
-#### **Install Server Dependencies**
 ```bash
 cd server
 npm install
 ```
 
-#### **Install Client Dependencies**
+Create `server/.env`:
+
+```env
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+ENCRYPTION_KEY=your_64_character_hex_key
+PORT=5000
+NODE_ENV=development
+FRONTEND_URL=http://localhost:3000
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=your_app_password
+EMAIL_FROM=CyberSuite <your_email@gmail.com>
+ML_SERVICE_URL=http://localhost:5001
+```
+
+### Frontend setup
+
 ```bash
 cd ../client
 npm install
 ```
 
-#### **Install Python ML Dependencies (Optional)**
+Create `client/.env.local`:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000
+```
+
+### Optional ML service setup
+
 ```bash
 cd ../server/ml_service
 pip install -r requirements.txt
 ```
-> ⚠️ **Note**: The ML service is optional. The application will work without it, but ML-powered features (anomaly detection, advanced password analysis) will be unavailable.
 
-### Step 4: Start Development Servers
+### Run locally
 
-#### **Terminal 1 - Start Backend**
+Backend:
+
 ```bash
 cd server
 npm start
 ```
-Server will run on `http://localhost:5000`
 
-#### **Terminal 2 - Start Frontend**
+Frontend:
+
 ```bash
 cd client
 npm run dev
 ```
-Client will run on `http://localhost:3000`
 
-#### **Terminal 3 - Start ML Service (Optional)**
+ML service:
+
 ```bash
 cd server/ml_service
 python app.py
 ```
-ML service will run on `http://localhost:5001`
-
-> 💡 **ML Service Notes**: 
-> - Requires 50-100 login records before training is possible
-> - Login data is automatically logged when users authenticate
-> - Train the model via admin dashboard once sufficient data is collected
-
-### Step 5: Verify Installation
-1. Navigate to `http://localhost:3000`
-2. You should see the login page
-3. Check backend health: `http://localhost:5000/api/health`
-
----
-
-## 📸 Screenshots
-
-### 🏠 Dashboard Overview
-
-<div align="center">
-
-#### Light Mode
-![Dashboard Light Mode](./docs/images/dashboard-light.png)
-*Clean, modern dashboard with real-time security metrics and activity monitoring*
-
-#### Dark Mode
-![Dashboard Dark Mode](./docs/images/dashboard-dark.png)
-*Eye-friendly dark mode with comprehensive threat monitoring*
-
-</div>
-
----
-
-### 🔐 Password Manager
-
-<div align="center">
-
-#### Password Manager Dashboard
-![Password Manager Light](./docs/images/password-manager-light.png)
-*Secure credential vault with AES-256 encryption in light mode*
-
-![Password Manager Dark](./docs/images/password-manager-dark.png)
-*Password manager with advanced search and filtering in dark mode*
-
-#### Add New Credential
-![Add Credential Light](./docs/images/add-credential-modal-light.png)
-*Intuitive credential creation modal in light mode*
-
-![Add Credential Dark](./docs/images/add-credential-modal-dark.png)
-*Add credential interface in dark mode*
-
-#### ML-Powered Password Generator
-![Password Generator with ML Analysis](./docs/images/password-generator-ml-dark.png)
-*Real-time password strength analysis with ML-based security recommendations*
-
-</div>
-
----
-
-### 🔒 Two-Factor Authentication (2FA)
-
-<div align="center">
-
-![2FA Settings Option](./docs/images/2fa-settings-option.png)
-*Enable 2FA from your profile settings page*
-
-![2FA Scanner View](./docs/images/2fa-scanner-view.png)
-*QR code setup for Google Authenticator, Authy, or Microsoft Authenticator*
-
-</div>
-
----
-
----
-
-### 🕵️ Network Scanner
-
-<div align="center">
-
-#### Network Scanner Dashboard
-![Network Scanner Dark](./docs/images/network-scanner-dark.png)
-*Real TCP port scanning dashboard with security analysis*
-
-#### Console Output
-![Network Scanner Console](./docs/images/network-scanner-console-dark.png)
-*Live scanning output showing detected services and vulnerabilities*
-
-</div>
-
----
-
-### 📦 File Vault
-
-<div align="center">
-
-![File Vault Light](./docs/images/file-vault-light.png)
-*Encrypted file storage with AES-256-GCM encryption and drag-and-drop upload*
-
-</div>
-
----
-
-### 🎓 Security Education Hub
-
-<div align="center">
-
-#### Education Dashboard
-![Education Dashboard Light](./docs/images/education-dashboard-light.png)
-*CyberSuite-specific security training courses in light mode*
-
-![Education Dashboard Dark](./docs/images/education-dashboard-dark.png)
-*Education hub with progress tracking in dark mode*
-
-#### Course Content
-![Courses List](./docs/images/courses-list-dark.png)
-*Browse available security courses*
-
-![Course Lesson](./docs/images/course-lesson-light.png)
-*Interactive lesson viewer with markdown rendering and progress tracking*
-
-</div>
-
----
-
-### ⚙️ Profile & Settings
-
-<div align="center">
-
-![Profile Settings Light](./docs/images/profile-settings-light.png)
-*User profile and security settings in light mode*
-
-![Profile Settings Dark](./docs/images/profile-settings-dark.png)
-*Profile management with 2FA controls in dark mode*
-
-</div>
-
----
-
-### 🗄️ Backend & Database
-
-<div align="center">
-
-![MongoDB Database](./docs/images/mongodb-database.png)
-*MongoDB database structure showing encrypted data storage*
-
-</div>
 
 ---
 
 ## 🗂️ Project Structure
 
-```
+<div align="center">
+
+The structure is intentionally split between a modern frontend, a secure API layer, and an isolated ML service.
+
+</div>
+
+```text
 cybersecurity-suite/
 ├── client/                 # Next.js frontend application
-│   ├── app/               # Next.js 15 App Router
-│   │   ├── dashboard/     # Main dashboard
-│   │   ├── login/         # Authentication pages
-│   │   └── register/
-│   ├── components/        # React components
-│   │   ├── ui/           # shadcn/ui components
-│   │   └── views/        # Feature-specific views
-│   ├── contexts/         # React context providers
-│   ├── hooks/            # Custom React hooks
-│   └── lib/              # Utility functions
-│
-└── server/               # Express.js backend API
-    ├── controllers/      # Request handlers
-    ├── middleware/       # Custom middleware (auth, validation)
-    ├── models/           # Mongoose schemas
-    ├── routes/           # API route definitions
-    ├── utils/            # Helper functions (encryption, etc.)
-    └── ml_service/       # Python ML microservice
-        ├── app.py        # Flask API server (port 5001)
-        ├── requirements.txt  # Python dependencies
-        ├── models/       # ML models (anomaly detector, password analyzer)
-        ├── data/         # Training data and logs
-        └── utils/        # ML utility functions
+│   ├── app/                # App Router pages
+│   ├── components/        # UI and feature components
+│   ├── contexts/          # React context providers
+│   ├── hooks/             # Custom hooks
+│   └── lib/               # Utilities and API helpers
+└── server/                # Express backend and services
+    ├── controllers/       # Request handlers
+    ├── middleware/        # Auth and logging middleware
+    ├── models/            # MongoDB models
+    ├── routes/            # API routes
+    ├── utils/             # Encryption and helper utilities
+    └── ml_service/        # Python ML microservice
 ```
+
+---
+
+## 🌐 API Endpoints
+
+<div align="center">
+
+The API surface is organized around the product’s major workflows so the architecture stays easy to understand.
+
+</div>
+
+### Authentication
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/login/2fa`
+- `POST /api/auth/logout`
+- `GET /api/auth/me`
+
+### Password Management
+
+- `GET /api/passwords`
+- `POST /api/passwords`
+- `PUT /api/passwords/:id`
+- `DELETE /api/passwords/:id`
+- `POST /api/passwords/:id/decrypt`
+
+### Two-Factor Authentication
+
+- `POST /api/2fa/setup`
+- `POST /api/2fa/verify`
+- `POST /api/2fa/validate`
+- `POST /api/2fa/disable`
+- `GET /api/2fa/status`
+
+### File Vault
+
+- `GET /api/files`
+- `POST /api/files/upload`
+- `GET /api/files/:id/download`
+- `DELETE /api/files/:id`
+
+### ML Service
+
+- `GET /api/ml/health`
+- `POST /api/ml/analyze-password`
+- `POST /api/ml/detect-anomaly`
+- `POST /api/ml/train`
+
+### Education
+
+- `GET /api/education/courses`
+- `GET /api/education/courses/:id`
+- `POST /api/education/progress`
 
 ---
 
 ## 🧪 Testing
 
-See [TESTING_CHECKLIST.md](TESTING_CHECKLIST.md) for comprehensive feature testing guide.
+Use the application locally and verify the main flows:
+
+<table>
+  <tr>
+    <td width="20%"><strong>01</strong></td>
+    <td>Open the app and confirm the landing page loads cleanly.</td>
+  </tr>
+  <tr>
+    <td><strong>02</strong></td>
+    <td>Create an account or log in and verify authentication.</td>
+  </tr>
+  <tr>
+    <td><strong>03</strong></td>
+    <td>Exercise the password manager, file vault, scanner, and education flows.</td>
+  </tr>
+</table>
+
+1. Open `http://localhost:3000`
+2. Register or log in
+3. Test the password manager and file vault
+4. Run a scan in the network scanner
+5. Review the education module and profile settings
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these steps:
+Contributions are welcome. Please keep changes focused, secure, and consistent with the current architecture.
+
+<div align="center">
+
+| Fork | Branch | Commit | Pull Request |
+| --- | --- | --- | --- |
+
+</div>
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Commit your changes
+4. Open a pull request
 
 ---
 
-## 📄 License
+## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Git-brintsi20**
+
 - GitHub: [@Git-brintsi20](https://github.com/Git-brintsi20)
 - Repository: [CyberSuite](https://github.com/Git-brintsi20/CyberSuite)
 
 ---
 
-## 🙏 Acknowledgments
-
-- OWASP Foundation for security guidelines
-- MongoDB Atlas for database hosting
-- Vercel for deployment platform
-- shadcn for UI component library
-
----
-
 <div align="center">
 
-**⭐ Star this repository if you find it helpful!**
+If this project helps, star it and share the demo.
 
-Made with ❤️ for a more secure digital world
+Made with care for a more secure digital world.
 
 </div>
-- **Helmet** for security headers
-- **CORS** with credentials
-- **Rate Limiting** for DDoS protection
-- **Zod** for validation
 
-## 📋 Prerequisites
-
-- **Node.js** 20.18.0 or higher
-- **MongoDB** 6.0 or higher (running locally or remotely)
-- **npm** or **pnpm**
-
-## 🔧 Installation
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/Git-brintsi20/CyberSuite.git
-cd CyberSuite/cybersecurity-suite
-```
-
-### 2. Backend Setup
-
-```bash
-cd server
-npm install
-```
-
-Create `.env` file in the server directory:
-
-```env
-PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/cybersuite
-
-# Security Keys - CHANGE THESE IN PRODUCTION!
-JWT_SECRET=your_super_secure_jwt_secret_key_here
-# ENCRYPTION_KEY must be exactly 32 bytes (64 hex characters) for AES-256
-ENCRYPTION_KEY=e8f32a394a1b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d
-
-NODE_ENV=development
-FRONTEND_URL=http://localhost:3000
-```
-
-### 3. Frontend Setup
-
-```bash
-cd ../client
-npm install
-```
-
-Create `.env.local` file in the client directory:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
-```
-
-### 4. Start MongoDB
-
-Make sure MongoDB is running on your system:
-
-```bash
-# Windows
-net start MongoDB
-
-# Mac/Linux
-sudo systemctl start mongod
-# or
-brew services start mongodb-community
-```
-
-## 🚀 Running the Application
-
-### Development Mode
-
-**Terminal 1 - Backend:**
-```bash
-cd server
-npm run dev
-# Server will run on http://localhost:5000
-```
-
-**Terminal 2 - Frontend:**
-```bash
-cd client
-npm run dev
-# Frontend will run on http://localhost:3000
-```
-
-### Production Mode
-
-**Backend:**
-```bash
-cd server
-npm start
-```
-
-**Frontend:**
-```bash
-cd client
-npm run build
-npm start
-```
-
-## 📁 Project Structure
-
-```
-cybersecurity-suite/
-├── client/                 # Next.js frontend
-│   ├── app/               # App router pages
-│   │   ├── login/         # Login page
-│   │   ├── register/      # Registration page
-│   │   └── dashboard/     # Protected dashboard
-│   ├── components/        # React components
-│   │   ├── ui/           # shadcn/ui components
-│   │   └── views/        # Feature views
-│   ├── contexts/          # React contexts
-│   │   └── AuthContext.tsx
-│   └── lib/              # Utilities
-│       └── api.js        # Axios API client
-│
-└── server/                # Express backend
-    ├── controllers/       # Request handlers
-    │   └── authController.js
-    ├── middleware/        # Express middleware
-    │   └── auth.js       # JWT verification
-    ├── models/           # Mongoose schemas
-    │   ├── User.js
-    │   └── Credential.js
-    ├── routes/           # API routes
-    │   ├── authRoutes.js
-    │   └── passwordRoutes.js
-    ├── utils/            # Utilities
-    │   └── encryption.js # AES-256 encryption
-    └── index.js          # Server entry point
-```
-
-## 🔐 Security Features
-
-- **AES-256-GCM Encryption**: All passwords are encrypted with authenticated encryption
-- **Bcrypt Password Hashing**: User passwords are hashed with salt rounds of 10
-- **HTTP-Only Cookies**: JWT tokens stored in secure HTTP-only cookies
-- **CORS Protection**: Configured to only accept requests from frontend
-- **Rate Limiting**: Prevents brute force attacks
-- **Helmet**: Sets secure HTTP headers
-- **Input Validation**: Zod schema validation on all endpoints
-- **Request Size Limiting**: Prevents DOS attacks
-
-## 🌐 API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `POST /api/auth/login/2fa` - Complete 2FA login
-- `POST /api/auth/logout` - Logout user
-- `GET /api/auth/me` - Get current user profile
-
-### Password Management
-- `GET /api/passwords` - Get all user credentials
-- `GET /api/passwords/:id` - Get single credential
-- `POST /api/passwords` - Add new credential
-- `PUT /api/passwords/:id` - Update credential
-- `DELETE /api/passwords/:id` - Delete credential
-- `POST /api/passwords/:id/decrypt` - Decrypt password
-- `GET /api/passwords/stats/strength` - Get statistics
-
-### Two-Factor Authentication
-- `POST /api/2fa/setup` - Initialize 2FA setup (get QR code)
-- `POST /api/2fa/verify` - Verify and enable 2FA
-- `POST /api/2fa/validate` - Validate 2FA code during login
-- `POST /api/2fa/disable` - Disable 2FA
-- `GET /api/2fa/status` - Get 2FA status
-- `POST /api/2fa/backup-codes/regenerate` - Regenerate backup codes
-
-### File Vault
-- `GET /api/files` - Get all user files
-- `GET /api/files/:id` - Get single file metadata
-- `POST /api/files/upload` - Upload encrypted file
-- `GET /api/files/:id/download` - Download and decrypt file
-- `DELETE /api/files/:id` - Delete file
-- `PATCH /api/files/:id/favorite` - Toggle favorite status
-
-### Machine Learning (ML Service)
-- `GET /api/ml/health` - Check ML service status
-- `POST /api/ml/analyze-password` - Analyze password strength using ML
-- `POST /api/ml/detect-anomaly` - Detect login anomalies (Protected)
-- `GET /api/ml/stats` - Get ML service statistics (Protected)
-- `POST /api/ml/train` - Train/retrain ML models (Admin only)
-
-### Education
-- `GET /api/education/courses` - Get all courses
-- `GET /api/education/courses/:id` - Get course details
-- `POST /api/education/progress` - Update course progress
-
-### Notifications
-- `GET /api/notifications` - Get user notifications
-- `PATCH /api/notifications/:id/read` - Mark notification as read
-
-## 🧪 Testing
-
-Access the application:
-1. Open http://localhost:3000
-2. Click "Get Started" to register
-3. Create an account
-4. Start using the password manager
-
-## 🔑 Environment Variables
-
-### Backend (.env)
-| Variable | Description | Required |
-|----------|-------------|----------|
-| PORT | Server port | Yes |
-| MONGO_URI | MongoDB connection string | Yes |
-| JWT_SECRET | Secret for JWT signing | Yes |
-| ENCRYPTION_KEY | 32-byte hex key for AES-256 | Yes |
-| NODE_ENV | Environment (development/production) | Yes |
-| FRONTEND_URL | Frontend URL for CORS | Yes |
-| ML_SERVICE_URL | Python ML service URL (default: http://localhost:5001) | No |
-
-### Frontend (.env.local)
-| Variable | Description | Required |
-|----------|-------------|----------|
-| NEXT_PUBLIC_API_URL | Backend API URL | Yes |
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📝 License
-
-This project is licensed under the MIT License.
-
-## 👤 Author
-
-**Git-brintsi20**
-- GitHub: [@Git-brintsi20](https://github.com/Git-brintsi20)
-
-## 🙏 Acknowledgments
-
-- Built with [Next.js](https://nextjs.org/)
-- UI components from [shadcn/ui](https://ui.shadcn.com/)
-- Icons from [Lucide](https://lucide.dev/)
-
----
-
-⭐ Star this repo if you find it helpful!
+<div style="border:1px solid #1f2937;border-radius:14px;padding:14px 16px;margin:16px 0;background:rgba(59,130,246,0.06);">
+  <strong>💡 Contribution goal:</strong> small, high-signal changes that improve the user experience, strengthen security, or sharpen the product narrative.
+</div>
